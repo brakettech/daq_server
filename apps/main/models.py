@@ -16,8 +16,25 @@ class Experiment(models.Model):
         return self.experiment_name
 
 
+class Configuration(models.Model):
+    label = models.CharField(max_length=CHAR_LENGTH, null=True, blank=True)
+    experiment = models.ForeignKey('main.Experiment')
+    last_modified= models.DateField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.label:
+            self.label = str(self)
+        super(Configuration, self).save(*args, **kwargs)
+
+    def __str__(self):
+        if self.label:
+            return self.label
+        else:
+            return 'Config_{:04d}_{}'.format(self.id, self.last_modified)
+
+
 class Description(models.Model):
-    notes = models.ForeignKey('main.Experiment')
+    notes = models.ForeignKey('main.Configuration')
     name = models.CharField(max_length=CHAR_LENGTH)
     value = models.TextField()
 
@@ -26,7 +43,7 @@ class Description(models.Model):
 
 
 class Parameter(models.Model):
-    notes = models.ForeignKey('main.Experiment')
+    notes = models.ForeignKey('main.Configuration')
     name = models.CharField(max_length=CHAR_LENGTH)
     value = models.CharField(max_length=CHAR_LENGTH)
     type = models.CharField(max_length=CHAR_LENGTH, choices=TYPE_CHOICES)
@@ -37,6 +54,9 @@ class Parameter(models.Model):
 
 class EntryInlineAdmin(admin.TabularInline):
     model = Parameter
+
+    def has_change_permission(self, request, obj=None):
+        return True
 
     def has_add_permission(self, request):
         return True
@@ -51,6 +71,9 @@ class EntryInlineAdmin(admin.TabularInline):
 class DescriptionInlineAdmin(admin.TabularInline):
     model = Description
 
+    def has_change_permission(self, request, obj=None):
+        return True
+
     def has_add_permission(self, request):
         return True
 
@@ -60,105 +83,36 @@ class DescriptionInlineAdmin(admin.TabularInline):
     def get_extra(self, request, obj=None, **kwargs):
         return 0
 
-@admin.register(Experiment)
-class NoteAdmin(admin.ModelAdmin):
+
+@admin.register(Configuration)
+class ConfigurationAdmin(admin.ModelAdmin):
     inlines = [
         EntryInlineAdmin,
         DescriptionInlineAdmin
 
     ]
 
-# class NoteKind(models.Model):
-#     name = models.CharField(max_length=CHAR_LENGTH)
-#     type = models.CharField(max_length=CHAR_LENGTH, choices=TYPE_CHOICES)
+class ConfigurationInlineAdmin(admin.TabularInline):
+    model = Configuration
 
-    # def __str__(self):
-    #     return self.name
-    #
+    def has_add_permission(self, request):
+        return True
 
+    def has_change_permission(self, request, obj=None):
+        return True
 
-# @admin.register(NoteKind)
-# class NoteKindAdmin(admin.ModelAdmin):
-#     pass
+    def has_delete_permission(self, request, obj=None):
+        return True
 
-# class NoteKindInlineAdmin(admin.TabularInline):
-#     model = NoteKind
+    def get_extra(self, request, obj=None, **kwargs):
+        return 0
 
-# class Note(models.Model):
-#     note_config = models.ForeignKey('main.NoteKind')
-#     file = models.ForeignKey('main.File')
-#     value = models.CharField(max_length=CHAR_LENGTH)
+    def show_change_link(self):
+        return True
 
 
-# @admin.register(Note)
-# class NoteAdmin(admin.ModelAdmin):
-#     pass
-
-# class NoteInlineAdmin(admin.TabularInline):
-#     model = Note
-
-# # Model for handling files
-# class File(models.Model):
-#     csv_name = models.CharField(max_length=CHAR_LENGTH)
-#     nc_name = models.CharField(max_length=CHAR_LENGTH)
-
-
-# @admin.register(File)
-# class FileAdmin(admin.ModelAdmin):
-#     inlines = [
-#         NoteInlineAdmin,
-#     ]
-
-
-# # # Model for handling files
-# # class File(models.Model):
-# #     csv_name = models.CharField(max_length=CHAR_LENGTH)
-# #     nc_name = models.CharField(max_length=CHAR_LENGTH)
-# #
-# #
-# # @admin.register(File)
-# # class FileAdmin(admin.ModelAdmin):
-# #     pass
-# #
-# #
-# # class Notes(models.Model):
-# #     schema = models.ForeignKey('main.Schema')
-# #
-# #
-# # @admin.register(Notes)
-# # class NoteAdmin(admin.ModelAdmin):
-# #     pass
-# #
-# #
-# # class Schema(models.Model):
-# #     name = models.CharField(max_length=CHAR_LENGTH)
-# #
-# #
-# # @admin.register(Schema)
-# # class SchemaAdmin(admin.ModelAdmin):
-# #     pass
-# #
-# #
-# # # Model for handling meta data
-# # class Field(models.Model):
-# #     schema = models.ForeignKey('main.Schema')
-# #     param_name = models.CharField(max_length=CHAR_LENGTH)
-# #     param_type = models.CharField(max_length=CHAR_LENGTH)
-# #
-# #
-# # @admin.register(Field)
-# # class FieldAdmin(admin.ModelAdmin):
-# #     pass
-# #
-# #
-# # class ParamRecord(models.Model):
-# #     notes = models.ForeignKey('main.Notes')
-# #     field = models.ForeignKey('main.Field')
-# #     value = models.BinaryField()
-# #
-# #
-# # @admin.register(ParamRecord)
-# # class ParamRecordAdmin(admin.ModelAdmin):
-# #     pass
-# #
-
+@admin.register(Experiment)
+class ExperimentAdmin(admin.ModelAdmin):
+    inlines = [
+        ConfigurationInlineAdmin,
+    ]
