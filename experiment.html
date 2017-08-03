@@ -1,8 +1,13 @@
 <!doctype html>
 <html>
 <head>
+   <!-- get the required files from 3rd party sources -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
+
   <style>
     body {
+      /*font-family: 'Roboto', sans-serif;*/
+      font-family: 'Open Sans', sans-serif;
       background-color: #F2F2F2;
     }
     .row_layout {
@@ -19,7 +24,11 @@
       flex-basis: 2em;
       overflow-x: scroll;
     }
-    .right_grower {
+    .mid_grower {
+      flex-grow: 6;
+      flex-basis: 2em;
+    }
+    .mid_grower {
       flex-grow: 6;
       flex-basis: 2em;
     }
@@ -73,7 +82,7 @@
       text-align: center;
       text-decoration: none;
       display: inline-block;
-      font-size: 10px;
+      font-size: 12px;
     }
     .button:active {
       background-color: #3e8e41;
@@ -112,7 +121,7 @@
 
 <div class="row_layout">
   <div class="col_layout">
-    <div class="card" style="height: 80px;">
+    <div class="card" style="height: 90px;">
       <div class="breath bold">Experiment</div>
       <div class="select-style">
         <select>
@@ -126,63 +135,137 @@
         <button class="button" style="width: 90%;">New</button>
       </div>
     </div>
-    <div class="card" style="height: 600px;">
+    <div class="card" style="width: 250px; height: 600px; white-space: nowrap;">
       <div class="breath bold">Configurations</div>
       <div style=" height: 550px; overflow-y: scroll; padding: 5px">
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
-        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+        <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
       </div>
     </div>
   </div>
 
-  <div class="card right_grower" >
-    right
+  <div class="mid_grower" style="height: 750px">
+
+
+    <div style="display: flex; height: 100%; flex-direction: column">
+      <div class="card" style="flex-grow: 1">
+        <div class="breath bold">Parameters</div>
+      </div>
+      <div class="card" style="flex-grow: 1">
+        <div class="breath bold">Notes</div>
+      </div>
+    </div>
+
+
+
+    <!--<div class="card">-->
+      <!--<div class="bold">Parameters</div>-->
+    <!--</div>-->
+    <!--<div class="card">-->
+      <!--<div class="bold">Notes</div>-->
+    <!--</div>-->
+
+
+
+
+  </div>
+  <div style="width: 400px; height: 750px; display: flex; flex-direction: column">
+    <div class="card" style="height: 90px;">
+      <div class="breath bold">Paths</div>
+      <form>
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div>CSV</div>
+            <div>
+              <input id="csv_path" type="text" placeholder="path to csv files", style="width: 310px">
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: row; justify-content: space-between">
+            <div>NCDF</div>
+            <div>
+              <input id="csv_path" type="text" placeholder="path to csv files", style="width: 310px">
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+
+    <div style="display: flex; height: 100%; flex-direction: column">
+      <div class="card" style="flex-grow: 1">
+        <div class="breath bold">CSV Files</div>
+      </div>
+      <div class="card" style="flex-grow: 1">
+        <div class="breath bold">NETCDF Files</div>
+      </div>
+    </div>
+
+
+
+
+
+    <!--<div class="card" style="height: 100px;">-->
+      <!--<div class="bold">CSV Files</div>-->
+    <!--</div>-->
+    <!--<div class="card" style="height: 100px;">-->
+      <!--<div class="bold">NETCDF Files</div>-->
+    <!--</div>-->
+    <!---->
+
+
+
+
+
+
+
+
   </div>
 
 </div>
