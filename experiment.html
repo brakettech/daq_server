@@ -94,6 +94,15 @@
       box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
     }
 
+    .floatable:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+    .floatable:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
     .highlightable{}
     .highlightable:hover{
       background-color: #F2F2F2;
@@ -194,19 +203,47 @@
 
 
     <div style="display: flex; height: 100%; flex-direction: column;">
-      <div class="card" style="height: 500px;">
+
+      <!-- BEGIN CONFIGURATION --------------------------------------------->
+      <div class="card" style="height: 100px;">
+        <div class="breath bold">Configuration</div>
+        <div style="display: flex; flex-direction: row;">
+          <span class="breath">Configuration</span>
+          <input class="breath" style="width:250px;" type="text">
+          <button class="button breath" style="width: 60px;">Save</button>
+        </div>
+
+
+
+
+
+        <!--<div style="height: 200px; overflow-x: scroll; display: flex; flex-direction: row; flex-wrap: wrap">-->
+          <!---->
+          <!--&lt;!&ndash; BEGIN COMPONENTS &ndash;&gt;-->
+
+
+
+          <!--<div class="breath">-->
+            <!--<button class="button" style="width: 90%;">New</button>-->
+          <!--</div>-->
+
+        <!--</div>-->
+
+
+
+      </div>
+
+
+      <!-- BEGIN PARAMETERS --------------------------------------------->
+      <div class="card" style="height: 300px;">
         <div class="breath bold">Parameters</div>
 
-
-
-
-
-        <div style="height: 400px; overflow-x: scroll; display: flex; flex-direction: column; flex-wrap: wrap">
+        <div style="height: 270px; overflow-x: scroll; display: flex; flex-direction: column; flex-wrap: wrap">
           <!-- BEGIN COMPONENTS -->
 
 
 
-          <div class="nobreath">
+          <div style="margin-right: 10px;">
             param_e <input type="text">
             <div class="select-style" style="display: inline">
               <select>
@@ -214,11 +251,13 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
+
           </div>
 
 
-          <div class="nobreath">
+          <div style="margin-right: 10px;">
             param_aaaaaname <input type="text">
             <div class="select-style" style="display: inline">
               <select>
@@ -226,6 +265,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -238,6 +278,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -250,6 +291,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -261,6 +303,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -273,6 +316,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div>
@@ -283,6 +327,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -295,6 +340,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -305,6 +351,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -317,6 +364,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div>
@@ -327,6 +375,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -339,6 +388,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -349,6 +399,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -361,6 +412,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -371,6 +423,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -383,6 +436,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -393,6 +447,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -405,6 +460,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -415,6 +471,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -427,6 +484,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
           <div class="nobreath">
@@ -437,6 +495,7 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
 
@@ -449,8 +508,10 @@
                 <option value="int">int</option>
                 <option value="str">str</option>
               </select>
+              <a href="#rob" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
             </div>
           </div>
+          <button class="button breath" style="width: 100px;">New Param</button>
 
           <!-- END COMPONENTS -->
 
@@ -466,23 +527,12 @@
 
 
 
-      <!--</div>-->
-      <div class="card" style="flex-grow: 4">
-        <div class="breath bold">Parameters</div>
-      </div>
       <div class="card" style="flex-grow: 4">
         <div class="breath bold">Notes</div>
+        <textarea rows="15" style="width: 95%; font-size: small"></textarea>
       </div>
     </div>
 
-
-
-    <!--<div class="card">-->
-      <!--<div class="bold">Parameters</div>-->
-    <!--</div>-->
-    <!--<div class="card">-->
-      <!--<div class="bold">Notes</div>-->
-    <!--</div>-->
 
 
 
@@ -496,13 +546,13 @@
           <div style="display: flex; flex-direction: row; justify-content: space-between">
             <div>CSV</div>
             <div>
-              <input id="csv_path" type="text" placeholder="path to csv files", style="width: 310px">
+              <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
             </div>
           </div>
           <div style="display: flex; flex-direction: row; justify-content: space-between">
             <div>NCDF</div>
             <div>
-              <input id="csv_path" type="text" placeholder="path to csv files", style="width: 310px">
+              <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
             </div>
           </div>
         </div>
@@ -512,31 +562,125 @@
 
 
     <div style="display: flex; height: 100%; flex-direction: column">
-      <div class="card" style="flex-grow: 1">
-        <div class="breath bold">CSV Files</div>
+      <div class="card" style="height: 300px;">
+        <div class="breath bold">
+          <span class="breath">CSV Files</span>
+          <button class="button breath" style="width: 70px;">Refresh</button>
+        </div>
+        <div style=" height: 220px; overflow-y: scroll; padding: 5px">
+
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 28px; padding: 1px; font-size: xx-small">Tag</button>
+            <span class="breath">2017-09-28-12-23.csv</span>
+          </div>
+
+
+
+
+        </div>
+
       </div>
-      <div class="card" style="flex-grow: 1">
-        <div class="breath bold">NETCDF Files</div>
+      <div class="card" style="height: 300px;">
+        <div class="breath bold">
+          <span class="breath">NETCDF Files</span>
+          <button class="button breath" style="width: 70px;">Refresh</button>
+        </div>
+        <div style=" height: 220px; overflow-y: scroll; padding: 5px">
+
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+          <div style="display: flex; flex-direction: row;">
+            <button class="button breath" style="background-color: #00C1D7; width: 30px; padding: 1px; font-size: xx-small">Open</button>
+            <span class="breath">2017-09-28-12-23.nc</span>
+          </div>
+
+
+
+
+        </div>
+
       </div>
     </div>
-
-
-
-
-
-    <!--<div class="card" style="height: 100px;">-->
-      <!--<div class="bold">CSV Files</div>-->
-    <!--</div>-->
-    <!--<div class="card" style="height: 100px;">-->
-      <!--<div class="bold">NETCDF Files</div>-->
-    <!--</div>-->
-    <!---->
-
-
-
-
-
-
 
 
   </div>
