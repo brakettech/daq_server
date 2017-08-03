@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #F2F2F2;
+    }
+    .row_layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .col_layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .left_grower {
+      flex-grow: 1;
+      flex-basis: 2em;
+      overflow-x: scroll;
+    }
+    .right_grower {
+      flex-grow: 6;
+      flex-basis: 2em;
+    }
+    .third_height {
+      height: 29vh;
+      overflow-y: scroll;
+    }
+    .full_height {
+      height: 93vh;
+      overflow-y: scroll;
+    }
+    .card {
+      background-color: white;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+      margin: 5px;
+      padding: 10px;
+    }
+    select-style {
+      border: 1px solid #ccc;
+      width: 120px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .select-style select {
+      padding: 5px 8px;
+      width: 90%;
+      /*border: none;*/
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0px;
+      /*background-image: none;*/
+      -webkit-appearance: none;
+    }
+
+    .select-style select:focus {
+      outline: none;
+    }
+    .select-style select:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+
+    .breath {
+      margin: 5px;
+    }
+    .button {
+      width: 100px;
+      background-color: #1D76F5;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 10px;
+    }
+    .button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+    .button:focus {outline:0;}
+    .button:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+
+    .highlightable{}
+    .highlightable:hover{
+      background-color: #F2F2F2;
+    }
+
+    ul {
+      list-style: none;
+    }
+    li {
+      margin: 2px;
+      text-align: left;
+    }
+
+    .bold {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+
+    }
+
+
+  </style>
+</head>
+<body>
+
+<div class="row_layout">
+  <div class="col_layout">
+    <div class="card" style="height: 80px;">
+      <div class="breath bold">Experiment</div>
+      <div class="select-style">
+        <select>
+          <option value="sweeps">Sweeps</option>
+          <option value="bark">Bark Noise</option>
+          <option value="low">Low Frequency</option>
+          <option value="high">Really Really High Frequency</option>
+        </select>
+      </div>
+      <div class="breath">
+        <button class="button" style="width: 90%;">New</button>
+      </div>
+    </div>
+    <div class="card" style="height: 600px;">
+      <div class="breath bold">Configurations</div>
+      <div style=" height: 550px; overflow-y: scroll; padding: 5px">
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+        <div class="breath highlightable">conf-2017-01-01:23:12:15</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card right_grower" >
+    right
+  </div>
+
+</div>
+
+
+</body>
+
+</html>
