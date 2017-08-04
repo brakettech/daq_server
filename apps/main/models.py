@@ -10,10 +10,10 @@ TYPE_CHOICES = [
 ]
 
 class Experiment(models.Model):
-    experiment_name = models.CharField(max_length=CHAR_LENGTH, default='Setup')
+    name = models.CharField(max_length=CHAR_LENGTH, default='Setup')
 
     def __str__(self):
-        return self.experiment_name
+        return self.name
 
 
 class Configuration(models.Model):

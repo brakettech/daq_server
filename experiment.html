@@ -127,8 +127,8 @@
   </style>
 </head>
 <body>
-
-<div class="row_layout">
+<form>
+  <div class="row_layout">
   <div class="col_layout">
     <div class="card" style="height: 90px;">
       <div class="breath bold">Experiment</div>
@@ -541,22 +541,20 @@
   <div style="width: 400px; height: 750px; display: flex; flex-direction: column">
     <div class="card" style="height: 90px;">
       <div class="breath bold">Paths</div>
-      <form>
-        <div style="display: flex; flex-direction: column;">
-          <div style="display: flex; flex-direction: row; justify-content: space-between">
-            <div>CSV</div>
-            <div>
-              <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
-            </div>
-          </div>
-          <div style="display: flex; flex-direction: row; justify-content: space-between">
-            <div>NCDF</div>
-            <div>
-              <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
-            </div>
+      <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+          <div>CSV</div>
+          <div>
+            <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
           </div>
         </div>
-      </form>
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+          <div>NCDF</div>
+          <div>
+            <input id="csv_path" spellcheck="false" type="text" placeholder="path to csv files", style="width: 310px">
+          </div>
+        </div>
+      </div>
 
     </div>
 
@@ -686,8 +684,7 @@
   </div>
 
 </div>
-
-
+</form>
 </body>
 
 </html>
