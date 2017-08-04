@@ -5,23 +5,32 @@ from django.shortcuts import render
 from django.views import View
 from django.shortcuts import render
 #from apps.main.models import Experiment, Configuration, Parameter, Description
-from apps.main.models import Experiment
-from rest_framework import viewsets
+from apps.main.models import Parameter
+from rest_framework import viewsets, views, generics
 from apps.main.models import Parameter
 from apps.main.serializers import ParameterSerializer
 
 
-class ExperimentList(View):
-    # model = Experiment
-    template_name = 'silly.html'
-
-    def get(self, request, *args, **kwargs):
-        return render(
-            request,
-            self.template_name,
-            {'experiments': Experiment.objects.all()})
-
-
-class ParameterViewSet(viewsets.ModelViewSet):
+class ParamList(generics.ListCreateAPIView):
+    queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
-    queryset =  Parameter.objects.all().order_by('name')
+
+    def get_queryset(self):
+        print('\n\nkwargs = ', self.kwargs)
+        configuration_id = self.kwargs.get('configuration_id')
+        qs = Parameter.objects.all()
+        if configuration_id:
+            qs = qs.filter(configuration_id=configuration_id)
+        return qs
+
+
+    def get(self, *args, **kwargs):
+        queryset = self.get_queryset()
+        print('args', repr(args))
+        print('kwargs', repr(kwargs))
+        return super(ParamList, self).get(*args, **kwargs)
+
+
+class ParamDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Parameter.objects.all()
+    serializer_class = ParameterSerializer
