@@ -63,19 +63,22 @@ def form_getter(chosen_experiment=None):
 
 class ExperimentView(FormView):
     template_name = 'silly.html'
-    form_class = form_getter()
-    success_url = '/main/rob'
+
+    def __init__(self, *args, **kwargs):
+        self.form_class = form_getter()
+        self.success_url_base = '/main/experiment'
+
+        super().__init__(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        f = self.form_class()
-        print('fields {}'.format(list(f.fields.keys())))
+        print('get_context_data_kwargs', kwargs)
         context = super(ExperimentView, self).get_context_data(**kwargs)
-        context['my_name'] = 'rob decarvalho'
-        context['was_submitted'] = False
         return context
 
     def form_valid(self, form):
         print('form data', form.cleaned_data)
+        if form.cleaned_data.get('experiment'):
+            self.success_url= '{}/{}'.format(self.success_url_base, str(form.cleaned_data['experiment']))
         return super(ExperimentView, self).form_valid(form)
 
     def get(self, request, **kwargs):

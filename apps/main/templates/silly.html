@@ -129,22 +129,38 @@
 </head>
 
 <body>
-<form action="/main/rob" method="post">{% csrf_token %}
+<form action="/main/experiment/" method="post">{% csrf_token %}
 
   <div class="row_layout">
     <div class="col_layout">
+      {# --  Experiment picker card --- #}
       <div class="card" style="height: 90px;">
         <div class="breath bold">Experiment</div>
         <div class="select-style">
           {{ form.experiment }}
         </div>
         <div class="breath">
-          <button class="submit" style="width: 90%;">New</button>
+          <button class="button" type="submit" style="width: 90%;">New</button>
         </div>
-
       </div>
+      {# --- End Experiment Card --- #}
 
+      {#  -- Configuration Card --- #}
+      <div class="card" style="width: 250px; height: 600px; white-space: nowrap;">
+        <div class="breath bold">Configurations</div>
+        <div style=" height: 550px; overflow-y: scroll; padding: 5px">
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
+
+        </div>
+        {# --- End Configration Card --- #}
     </div>
+
   </div>
 
 </form>

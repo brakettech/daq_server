@@ -10,7 +10,10 @@ from rest_framework import routers
 #router.register(r'parameter', views.ParamDetail)
 
 urlpatterns = [
-    url(r'^experiment/(?P<experiment_id>\d+)*$', ExperimentView.as_view()),
+    #url(r'^experiment/(?P<experiment_id>\d+)*/(?P<configuration_id>\d+)*$', ExperimentView.as_view()),
+    url(r'^experiment/?$', ExperimentView.as_view()),
+    url(r'^experiment/(?P<experiment_id>\d+)/?$', ExperimentView.as_view()),
+    url(r'^experiment/(?P<experiment_id>\d+)/(?P<configuration_id>\d+)/?$', ExperimentView.as_view()),
     #url(r'^rob/?$', TemplateView.as_view(template_name="silly.html")),
     #url(r'^rich/?$', ExperimentList.as_view()),
     url(r'parameters/(?P<configuration_id>\d+)*$', views.ParamList.as_view()),
