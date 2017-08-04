@@ -82,6 +82,7 @@ class ExperimentView(FormView):
         return super(ExperimentView, self).form_valid(form)
 
     def get(self, request, **kwargs):
+        #RUN GET_CONTEXT_DATA HERE AND UPDATE CONTEXT DICT.  THIS SHOULD THEN RENDER
         self.form_class = form_getter(kwargs.get('experiment_id'))
         print('get {}'.format(kwargs))
         return super(ExperimentView, self).get(request, **kwargs)
