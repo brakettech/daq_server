@@ -6,6 +6,10 @@ from django.views import View
 from django.shortcuts import render
 #from apps.main.models import Experiment, Configuration, Parameter, Description
 from apps.main.models import Experiment
+from rest_framework import viewsets
+from apps.main.models import Parameter
+from apps.main.serializers import ParameterSerializer
+
 
 class ExperimentList(View):
     # model = Experiment
@@ -18,4 +22,6 @@ class ExperimentList(View):
             {'experiments': Experiment.objects.all()})
 
 
-
+class ParameterViewSet(viewsets.ModelViewSet):
+    serializer_class = ParameterSerializer
+    queryset =  Parameter.objects.all().order_by('name')

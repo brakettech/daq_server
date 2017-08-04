@@ -19,7 +19,7 @@ class Experiment(models.Model):
 class Configuration(models.Model):
     name = models.CharField(max_length=CHAR_LENGTH)
     experiment = models.ForeignKey('main.Experiment')
-    notes = models.TextField()
+    notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
