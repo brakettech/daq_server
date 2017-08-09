@@ -9,7 +9,7 @@ from apps.main.models import Parameter
 from rest_framework import viewsets, views, generics
 from apps.main.models import Parameter
 from apps.main.serializers import ParameterSerializer
-from apps.main.models import Experiment
+from apps.main.models import Experiment, Configuration
 
 from django import forms
 from django.views.generic.base import TemplateView
@@ -17,8 +17,6 @@ from django.views.generic import FormView
 
 def form_getter(chosen_experiment=None):
     experiments = list(Experiment.objects.all().order_by('name').values_list('id', 'name'))
-    print('experiments', experiments)
-
     class MyForm(forms.Form):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -33,33 +31,11 @@ def form_getter(chosen_experiment=None):
             self.fields['experiment'] = forms.ChoiceField(
                 **kwargs
             )
-            #self.fields['experiment']
-
-            #self.fields['experiment'] = forms.ChoiceField(
-            #    choices=experiments, widget=forms.Select(attrs={'style': 'width: 90%'})
-            #)
-
-            #self.fields['my_first'] = forms.CharField(label='First Name')
-            #self.fields['my_last'] = forms.CharField(label='Last Name')
-            #self.fields['my_float'] = forms.FloatField(label='Floating Number')
 
     return MyForm
 
-#class ExperimentView(View):
-#    template_name = 'silly.html'
-#
-#    def get(self, request, **kwargs):
-#        context = {
-#            'my_name': 'rich',
-#            'form': form_getter()
-#        }
-#        print('get kwargs', kwargs)
-#        return render(request, self.template_name, context=context)
-#
-#    def post(self, request, **kwargs):
-#        context = {'my_name': 'rich'}
-#        print('post kwargs', kwargs)
-#        return render(request, self.template_name, context=context)
+
+
 
 class ExperimentView(FormView):
     template_name = 'silly.html'
@@ -69,10 +45,34 @@ class ExperimentView(FormView):
         self.success_url_base = '/main/experiment'
 
         super().__init__(*args, **kwargs)
+        #self.object = Item()
+
+    def get_configurations(self, experiment_id):
+        qs = Configuration.objects.filter(experiment_id=experiment_id).order_by('name')
+        return qs
+
+    def get_experiment(self, experiment_id):
+        return Experiment.objects.get(id=experiment_id)
+
+    def get_configurations(self, experiment_id):
+        return Configuration.objects.filter(experiment_id=experiment_id).order_by('name')
 
     def get_context_data(self, **kwargs):
-        print('get_context_data_kwargs', kwargs)
+        experiment_id = kwargs.get('experiment_id', Experiment.objects.first().id)
+        form_class = form_getter(experiment_id)
+        form = self.get_form(form_class)
         context = super(ExperimentView, self).get_context_data(**kwargs)
+        context['experiment'] = self.get_experiment(experiment_id)
+        context['form'] = form
+        context['configurations'] = self.get_configurations(experiment_id)
+
+        '''
+        Okay.  Here's what's going on.  I just got the url to change
+        in response to choosing experiment.  I also got the configurations
+        linked to provide the proper params.
+        '''
+
+
         return context
 
     def form_valid(self, form):
@@ -82,10 +82,8 @@ class ExperimentView(FormView):
         return super(ExperimentView, self).form_valid(form)
 
     def get(self, request, **kwargs):
-        #RUN GET_CONTEXT_DATA HERE AND UPDATE CONTEXT DICT.  THIS SHOULD THEN RENDER
-        self.form_class = form_getter(kwargs.get('experiment_id'))
-        print('get {}'.format(kwargs))
-        return super(ExperimentView, self).get(request, **kwargs)
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
     def post(self, request, **kwargs):
         print('post {}'.format(kwargs))

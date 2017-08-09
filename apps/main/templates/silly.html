@@ -126,6 +126,13 @@
 
   </style>
 
+  {# load jquery #}
+  <script
+  src="http://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+
+
 </head>
 
 <body>
@@ -149,14 +156,9 @@
       <div class="card" style="width: 250px; height: 600px; white-space: nowrap;">
         <div class="breath bold">Configurations</div>
         <div style=" height: 550px; overflow-y: scroll; padding: 5px">
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-          <div class="breath highlightable"><a href="#" ><div>conf-2017-01-01:23:12:15</div></a></div>
-
+          {%  for config in configurations %}
+            <div class="breath highlightable"><a href="/main/experiment/{{ experiment.id }}/{{ config.id }}" ><div>{{ config.name }}</div></a></div>
+          {% endfor %}
         </div>
       </div>
       {# --- End Configration Card --- #}
@@ -168,5 +170,18 @@
 
 </form>
 </body>
+
+
+{# custom javascript #}
+<script>
+    $("#id_experiment").change(
+        function(){
+{#            alert("select changed to " + this.value)#}
+            window.location.href = "/main/experiment/" + this.value
+        }
+    )
+
+
+</script>
 
 </html>
