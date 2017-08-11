@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models.functions import Lower
 
 # Create your views here.
 #from django.views.generic import ListView
@@ -16,7 +17,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic import FormView
 
 def form_getter(chosen_experiment=None):
-    experiments = list(Experiment.objects.all().order_by('name').values_list('id', 'name'))
+    experiments = list(Experiment.objects.all().order_by(Lower('name')).values_list('id', 'name'))
     class MyForm(forms.Form):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -47,24 +48,68 @@ class ExperimentView(FormView):
         super().__init__(*args, **kwargs)
         #self.object = Item()
 
-    def get_configurations(self, experiment_id):
-        qs = Configuration.objects.filter(experiment_id=experiment_id).order_by('name')
-        return qs
-
     def get_experiment(self, experiment_id):
         return Experiment.objects.get(id=experiment_id)
 
     def get_configurations(self, experiment_id):
-        return Configuration.objects.filter(experiment_id=experiment_id).order_by('name')
+        return list(Configuration.objects.filter(experiment_id=experiment_id).order_by(Lower('name')))
+
+    def get_params(selfself, experiment_id, config_id):
+        if config_id is None:
+            qs = Configuration.objects.filter(experiment_id=experiment_id).order_by(Lower('name'))
+            if qs.exists():
+                config_id = qs.first().id
+            else:
+                return []
+
+        qs = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
+        print('v'*80)
+        for p in Parameter.objects.all():
+            print(p.configuration_id, p.name)
+        print('v'*80)
+        return list(qs)
+
 
     def get_context_data(self, **kwargs):
         experiment_id = kwargs.get('experiment_id', Experiment.objects.first().id)
+        config_id = kwargs.get('configuration_id')
         form_class = form_getter(experiment_id)
         form = self.get_form(form_class)
         context = super(ExperimentView, self).get_context_data(**kwargs)
         context['experiment'] = self.get_experiment(experiment_id)
         context['form'] = form
         context['configurations'] = self.get_configurations(experiment_id)
+        context['params'] = self.get_params(experiment_id, config_id)
+
+        """
+        I WANT TO TRY AND CHANGE THIS TO HAVE A CURRENT_CONFIG IN THE CONTEXT
+        THAT IS POSSIBLY NONE.  I THINK I CAN CLEAN UP THE LOGIC BELOW WITH THIS.
+        I ALSO THINK IT WILL MAKE IT BETTER FOR HIGHLIGHTING CURRENTLY SELECTED CONFIG
+        AND PUSHING THE PROPER CONFIG ID INTO THE FORM
+        """
+        context['current_config_name'] = 'No Configuration Selected'
+        if context['configurations']:
+            if config_id is None:
+                current_config = context['configurations'][0]
+                context['current_config_name'] = current_config.name
+                context['notes'] = current_config.notes
+            else:
+                for config in context['configurations']:
+                    if config_id and int(config_id) == config.id:
+                        context['current_config_name'] = config.name
+                        context['notes'] = config.notes
+                        break
+
+        from pprint import pprint
+
+        print('*'*80)
+        pprint('kwargs')
+        print(kwargs)
+        print('*'*80)
+        print('context')
+        #print('notes: '.format(repr(context['experiment'].notes)))
+        pprint(context)
+        print('*'*80)
 
         '''
         Okay.  Here's what's going on.  I just got the url to change

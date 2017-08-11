@@ -138,6 +138,7 @@
 <body>
 <form action="/main/experiment/" method="post">{% csrf_token %}
 
+  {# --- left column -- #}
   <div class="row_layout">
     <div class="col_layout">
       {# --  Experiment picker card --- #}
@@ -165,8 +166,75 @@
 
 
     </div>
+    {# --- end left column -- #}
+
+    {# --- middle column -- #}
+    <div class="mid_grower" style="height: 750px">
+
+
+      <div style="display: flex; height: 100%; flex-direction: column;">
+
+        <!-- BEGIN CONFIGURATION --------------------------------------------->
+        <div class="card" style="height: 100px;">
+          <div class="breath bold">Configuration</div>
+          <div style="display: flex; flex-direction: row;">
+            <span class="breath">Configuration</span>
+            <input class="breath" style="width:250px;" value="{{ current_config_name }}" type="text">
+            <button class="button breath" style="width: 60px;">Save</button>
+          </div>
+
+
+        </div>
+
+
+        {#  -- begin parameters -- #}
+        <div class="card" style="height: 300px;">
+          <div class="breath bold">{{ current_config_name }}</div>
+
+          <div style="height: 270px; overflow-x: scroll; display: flex; flex-direction: column; flex-wrap: wrap">
+
+            {# --- begin components -- #}
+            {% for param in params %}
+              <div style="margin-right: 10px;">
+                {{ param.name }} <input name="param_{{ param.id }}" type="text">
+                <div class="select-style" style="display: inline">
+                  <select name="param_type_{{ param.id }}">
+                    <option value="float">float</option>
+                    <option value="int">int</option>
+                    <option value="str">str</option>
+                  </select>
+                  <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
+                </div>
+              </div>
+            {% endfor %}
+            {# --- end components -- #}
+
+          </div>
+        </div>
+        {#  -- end parameters -- #}
+
+
+
+
+
+        <div class="card" style="flex-grow: 4">
+          <div class="breath bold">Notes</div>
+          <textarea rows="15" style="width: 95%; font-size: small">{{ notes }}</textarea>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+
+
+    {# --- end middle column -- #}
 
   </div>
+
 
 </form>
 </body>
@@ -176,7 +244,8 @@
 <script>
     $("#id_experiment").change(
         function(){
-{#            alert("select changed to " + this.value)#}
+{#            var answer = confirm('are you sure')#}
+{#            alert('answer was ' + answer)#}
             window.location.href = "/main/experiment/" + this.value
         }
     )
