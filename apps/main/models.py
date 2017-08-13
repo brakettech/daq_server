@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib import admin
 
 CHAR_LENGTH = 1000
@@ -15,6 +15,15 @@ class Experiment(models.Model):
     class Meta:
         ordering = ['name']
 
+    @transaction.atomic
+    def clone(self, experiment_id):
+        e = Configuration.objects.get(id=self.id)
+        configs = Configuration.objects.filter(experiment=e)
+        e.id = None
+        e.save()
+        for c in configs:
+            c.clone(e.id)
+
     def __str__(self):
         return self.name
 
@@ -28,6 +37,15 @@ class Configuration(models.Model):
         unique_together = (('experiment', 'name'))
         ordering = ['name']
 
+    @transaction.atomic
+    def clone(self, experiment_id):
+        c = Configuration.objects.get(id=self.id)
+        params = Parameter.objects.filter(configuration=c)
+        c.id = None
+        c.experiment_id = experiment_id
+        c.save()
+        for p in params:
+            p.clone(c.id)
 
 
     def __str__(self):
@@ -39,6 +57,12 @@ class Parameter(models.Model):
     name = models.CharField(max_length=CHAR_LENGTH)
     value = models.CharField(max_length=CHAR_LENGTH)
     type = models.CharField(max_length=CHAR_LENGTH, choices=TYPE_CHOICES)
+
+    def clone(self, config_id):
+        p = Parameter.objects.get(id=self.id)
+        p.id = None
+        p.configuration_id = config_id
+        p.save()
 
     class Meta:
         unique_together = (('configuration', 'name'))

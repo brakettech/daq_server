@@ -1,7 +1,8 @@
 from pprint import pprint
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models.functions import Lower
+
 
 # Create your views here.
 from django.views.generic import ListView, DetailView
@@ -18,38 +19,55 @@ from django import forms
 from django.views.generic.base import TemplateView
 from django.views.generic import FormView, DeleteView, CreateView, UpdateView
 
-# class NewExperimentForm(forms.Form):
-#     name = forms.CharField(required=True, label='New Experiment Name')
 
 class NewExperimentForm(forms.ModelForm):
     class Meta:
         model = Experiment
         fields = ['name']
 
+
 class DeleteExperimentView(DeleteView):
     model = Experiment
     success_url = '/main/experiment'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['configs'] = Configuration.objects.filter(experiment=context['experiment']).order_by(Lower('name'))
         return context
 
-class NewExperimentView(FormView):
-    template_name = 'new_experiment.html'
-    form_class = NewExperimentForm
 
-    def form_valid(self, form):
-        Experiment.objects.create(name=form.cleaned_data['name'])
-        return super().form_valid(form)
+class NewExperimentView(CreateView):
+    model = Experiment
+    fields = ['name']
 
     def get_success_url(self):
         return r'/main/experiment'
+
+class CloneExperimentView(View):
+    def get(self, request, **kwargs):
+        experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
+        # I NEED TO PROVIDE A NEW NAME ARGUMENT TO THE EXPERIMENT ID
+        experiment.clone()
+        print()
+        print('cloning for {}'.format(kwargs))
+        return redirect('/main/experiment')
+
+
+# class NewExperimentView(FormView):
+#     template_name = 'new_experiment.html'
+#     form_class = NewExperimentForm
+#
+#     def form_valid(self, form):
+#         Experiment.objects.create(name=form.cleaned_data['name'])
+#         return super().form_valid(form)
+#
 
 class ExperimentListView(ListView):
     model = Experiment
 
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
+
 
 class ConfigListView(ListView):
     model = Configuration
