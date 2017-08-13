@@ -12,6 +12,9 @@ TYPE_CHOICES = [
 class Experiment(models.Model):
     name = models.CharField(max_length=CHAR_LENGTH, default='Setup', unique=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -23,6 +26,7 @@ class Configuration(models.Model):
 
     class Meta:
         unique_together = (('experiment', 'name'))
+        ordering = ['name']
 
 
 
@@ -38,6 +42,7 @@ class Parameter(models.Model):
 
     class Meta:
         unique_together = (('configuration', 'name'))
+        ordering = ['name']
 
     def __str__(self):
         return self.name
