@@ -10,7 +10,7 @@ TYPE_CHOICES = [
 ]
 
 class Experiment(models.Model):
-    name = models.CharField(max_length=CHAR_LENGTH, default='Setup', unique=True)
+    name = models.CharField(max_length=CHAR_LENGTH, unique=True)
 
     class Meta:
         ordering = ['name']

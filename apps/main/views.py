@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.db.models.functions import Lower
 
 # Create your views here.
-#from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views import View
 from django.shortcuts import render
 #from apps.main.models import Experiment, Configuration, Parameter, Description
@@ -16,7 +16,72 @@ from apps.main.models import Experiment, Configuration
 
 from django import forms
 from django.views.generic.base import TemplateView
-from django.views.generic import FormView
+from django.views.generic import FormView, DeleteView, CreateView, UpdateView
+
+# class NewExperimentForm(forms.Form):
+#     name = forms.CharField(required=True, label='New Experiment Name')
+
+class NewExperimentForm(forms.ModelForm):
+    class Meta:
+        model = Experiment
+        fields = ['name']
+
+class DeleteExperimentView(DeleteView):
+    model = Experiment
+    success_url = '/main/experiment'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['configs'] = Configuration.objects.filter(experiment=context['experiment']).order_by(Lower('name'))
+        return context
+
+class NewExperimentView(FormView):
+    template_name = 'new_experiment.html'
+    form_class = NewExperimentForm
+
+    def form_valid(self, form):
+        Experiment.objects.create(name=form.cleaned_data['name'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return r'/main/experiment'
+
+class ExperimentListView(ListView):
+    model = Experiment
+
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
+
+class ConfigListView(ListView):
+    model = Configuration
+
+    def get_queryset(self):
+        return Configuration.objects.filter(
+            experiment_id=int(self.kwargs['experiment_id'])
+        ).order_by(Lower('name'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['experiment'] = Experiment.objects.get(id=int(self.kwargs['experiment_id']))
+        return context
+
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
+
+# class ExperimentEditView(FormView):
+#     template_name = 'experiment_edit.html'
+#     form_class = NewExperimentForm
+#
+#     def form_valid(self, form):
+#         print('*'*80)
+#         print(form.cleaned_data)
+#         print('*'*80)
+#         Experiment.objects.create(name=form.cleaned_data['name'])
+#         return super().form_valid(form)
+#
+#     def get_success_url(self):
+#         return r'/main/experiment'
+
+
 
 # def form_getter(chosen_experiment=None):
 #     experiments = list(Experiment.objects.all().order_by(Lower('name')).values_list('id', 'name'))
@@ -41,33 +106,33 @@ from django.views.generic import FormView
 #
 #     return MyForm
 
-class MyForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        field_class_lookup = {
-            'str': forms.CharField,
-            'int': forms.IntegerField,
-            'float': forms.FloatField
-        }
+# class MyForm(forms.Form):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         field_class_lookup = {
+#             'str': forms.CharField,
+#             'int': forms.IntegerField,
+#             'float': forms.FloatField
+#         }
+#
+#         experiments = [(e.id, e.name) for e in Experiment.objects.all().order_by(Lower('name'))]
+#         configs = [(c.id, c.name) for c in Configuration.objects.all().order_by(Lower('name'))]
+#         for param in Parameter.objects.all():
+#             field_class = field_class_lookup[param.type]
+#             self.fields['param_{}'.format(param.id)] = field_class(label=param.name)
+#
+#             print(param.name, param.type)
+#             # self.fields['param_{}'.format(param.id)]
+#         self.fields['experiment'] = forms.ChoiceField(choices=experiments, widget=forms.Select())
+#         self.fields['configs'] = forms.ChoiceField(choices=configs, widget=forms.RadioSelect())
+#
+#     def clean(self):
+#         print('form data: ', self.data)
+#         return super().clean()
 
-        experiments = [(e.id, e.name) for e in Experiment.objects.all().order_by(Lower('name'))]
-        configs = [(c.id, c.name) for c in Configuration.objects.all().order_by(Lower('name'))]
-        for param in Parameter.objects.all():
-            field_class = field_class_lookup[param.type]
-            self.fields['param_{}'.format(param.id)] = field_class(label=param.name)
-
-            print(param.name, param.type)
-            # self.fields['param_{}'.format(param.id)]
-        self.fields['experiment'] = forms.ChoiceField(choices=experiments, widget=forms.Select())
-        self.fields['configs'] = forms.ChoiceField(choices=configs, widget=forms.RadioSelect())
-
-    def clean(self):
-        print('form data: ', self.data)
-        return super().clean()
-
-class ExperimentView(FormView):
-    template_name = 'main.html'
-    form_class = MyForm
+# class ExperimentView(FormView):
+#     template_name = 'main.html'
+#     form_class = MyForm
 #
 #     def __init__(self, *args, **kwargs):
 #         #self.form_class = form_getter()
@@ -348,26 +413,26 @@ class ExperimentView(FormView):
 
 
 
-class ParamList(generics.ListCreateAPIView):
-    queryset = Parameter.objects.all()
-    serializer_class = ParameterSerializer
-
-    def get_queryset(self):
-        print('\n\nkwargs = ', self.kwargs)
-        configuration_id = self.kwargs.get('configuration_id')
-        qs = Parameter.objects.all()
-        if configuration_id:
-            qs = qs.filter(configuration_id=configuration_id)
-        return qs
-
-
-    def get(self, *args, **kwargs):
-        queryset = self.get_queryset()
-        print('args', repr(args))
-        print('kwargs', repr(kwargs))
-        return super(ParamList, self).get(*args, **kwargs)
-
-
-class ParamDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Parameter.objects.all()
-    serializer_class = ParameterSerializer
+# class ParamList(generics.ListCreateAPIView):
+#     queryset = Parameter.objects.all()
+#     serializer_class = ParameterSerializer
+#
+#     def get_queryset(self):
+#         print('\n\nkwargs = ', self.kwargs)
+#         configuration_id = self.kwargs.get('configuration_id')
+#         qs = Parameter.objects.all()
+#         if configuration_id:
+#             qs = qs.filter(configuration_id=configuration_id)
+#         return qs
+#
+#
+#     def get(self, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         print('args', repr(args))
+#         print('kwargs', repr(kwargs))
+#         return super(ParamList, self).get(*args, **kwargs)
+#
+#
+# class ParamDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Parameter.objects.all()
+#     serializer_class = ParameterSerializer
