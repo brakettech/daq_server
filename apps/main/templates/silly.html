@@ -122,6 +122,26 @@
       text-align: center;
 
     }
+    .delete_button {
+      width: 30px;
+      background-color: white;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+    }
+    .delete_button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+    .delete_button:focus {outline:0;}
+    .delete_button:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
 
 
   </style>
@@ -136,7 +156,7 @@
 </head>
 
 <body>
-<form action="/main/experiment/" method="post">{% csrf_token %}
+<form id='main_form' action="/main/experiment/" method="post">{% csrf_token %}
 
   {# --- left column -- #}
   <div class="row_layout">
@@ -148,7 +168,7 @@
           {{ form.experiment }}
         </div>
         <div class="breath">
-          <button class="button" type="submit" style="width: 90%;">New</button>
+          <button class="button" name="new_experiment" type="submit" style="width: 90%;">New</button>
         </div>
       </div>
       {# --- End Experiment Card --- #}
@@ -179,8 +199,8 @@
           <div class="breath bold">Configuration</div>
           <div style="display: flex; flex-direction: row;">
             <span class="breath">Configuration</span>
-            <input class="breath" style="width:250px;" value="{{ current_config_name }}" type="text">
-            <button class="button breath" style="width: 60px;">Save</button>
+            <input class="breath" name="config_name" style="width:250px;" value="{{ current_config_name }}" type="text">
+            <button class="button breath" name="config_save" style="width: 60px;">Save</button>
           </div>
 
 
@@ -193,6 +213,9 @@
 
           <div style="height: 270px; overflow-x: scroll; display: flex; flex-direction: column; flex-wrap: wrap">
 
+            <div>
+              <button class="button" name="new_param" type="submit" >New</button>
+            </div>
             {# --- begin components -- #}
             {% for param in params %}
               <div style="margin-right: 10px;">
@@ -203,7 +226,8 @@
                     <option value="int">int</option>
                     <option value="str">str</option>
                   </select>
-                  <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>
+{#                  <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>#}
+                  <button name="delete_param" value="{{ param.id }}" class="delete_button">&#10060;</button>
                 </div>
               </div>
             {% endfor %}

@@ -1,5 +1,280 @@
+<!doctype html>
 <html>
-Silly
-yes it is.
-yes it is.
+<head>
+  <!-- get the required files from 3rd party sources -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
+
+  <style>
+    body {
+      /*font-family: 'Roboto', sans-serif;*/
+      font-family: 'Open Sans', sans-serif;
+      background-color: #F2F2F2;
+    }
+    .row_layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .col_layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .left_grower {
+      flex-grow: 1;
+      flex-basis: 2em;
+      overflow-x: scroll;
+    }
+    .mid_grower {
+      flex-grow: 6;
+      flex-basis: 2em;
+    }
+    .mid_grower {
+      flex-grow: 6;
+      flex-basis: 2em;
+    }
+    .third_height {
+      height: 29vh;
+      overflow-y: scroll;
+    }
+    .full_height {
+      height: 93vh;
+      overflow-y: scroll;
+    }
+    .card {
+      background-color: white;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+      margin: 5px;
+      padding: 10px;
+    }
+    select-style {
+      border: 1px solid #ccc;
+      width: 120px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .select-style select {
+      padding: 5px 8px;
+      /*width: 90%;*/
+      /*border: none;*/
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0px;
+      /*background-image: none;*/
+      -webkit-appearance: none;
+    }
+
+    .select-style select:focus {
+      outline: none;
+    }
+    .select-style select:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+
+    .breath {
+      margin: 5px;
+    }
+    .button {
+      width: 100px;
+      background-color: #1D76F5;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+    }
+    .button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+    .button:focus {outline:0;}
+    .button:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+
+    .floatable:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+    .floatable:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    .highlightable{}
+    .highlightable:hover{
+      background-color: #F2F2F2;
+    }
+
+    ul {
+      list-style: none;
+    }
+    li {
+      margin: 2px;
+      text-align: left;
+    }
+
+    .bold {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+
+    }
+    .delete_button {
+      width: 30px;
+      background-color: white;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+    }
+    .delete_button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+    .delete_button:focus {outline:0;}
+    .delete_button:hover {
+      box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
+    }
+
+
+  </style>
+
+  {# load jquery #}
+  <script
+  src="http://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+<form id='main_form' action="/main/experiment/" method="post">{% csrf_token %}
+
+  {# --- left column -- #}
+  <div class="row_layout">
+    <div class="col_layout">
+      {# --  Experiment picker card --- #}
+      <div class="card" style="height: 90px;">
+        <div class="breath bold">Experiment</div>
+        <div class="select-style">
+          {{ form.experiment }}
+        </div>
+        <div class="breath">
+          <button class="button" name="new_experiment" type="submit" style="width: 90%;">New</button>
+        </div>
+      </div>
+      {# --- End Experiment Card --- #}
+
+      {#  -- Configuration Card --- #}
+      <div class="card" style="width: 250px; height: 600px; white-space: nowrap;">
+        <div class="breath bold">Configurations</div>
+        <div style=" height: 550px; overflow-y: scroll; padding: 5px">
+          {%  for config in configurations %}
+            <div class="breath highlightable"><a href="/main/experiment/{{ experiment.id }}/{{ config.id }}" ><div>{{ config.name }}</div></a></div>
+          {% endfor %}
+        </div>
+      </div>
+      {# --- End Configration Card --- #}
+
+
+    </div>
+    {# --- end left column -- #}
+
+    {# --- middle column -- #}
+    <div class="mid_grower" style="height: 750px">
+
+
+      <div style="display: flex; height: 100%; flex-direction: column;">
+
+        <!-- BEGIN CONFIGURATION --------------------------------------------->
+        <div class="card" style="height: 100px;">
+          <div class="breath bold">Configuration</div>
+          <div style="display: flex; flex-direction: row;">
+            <span class="breath">Configuration</span>
+            <input class="breath" name="config_name" style="width:250px;" value="{{ current_config_name }}" type="text">
+            <button class="button breath" name="config_save" style="width: 60px;">Save</button>
+          </div>
+
+
+        </div>
+
+
+        {#  -- begin parameters -- #}
+        <div class="card" style="height: 300px;">
+          <div class="breath bold">{{ current_config_name }}</div>
+
+          <div style="height: 270px; overflow-x: scroll; display: flex; flex-direction: column; flex-wrap: wrap">
+
+            <div>
+              <button class="button" name="new_param" type="submit" >New</button>
+            </div>
+            {# --- begin components -- #}
+            {% for param in params %}
+              <div style="margin-right: 10px;">
+                {{ param.name }} <input name="param_{{ param.id }}" type="text">
+                <div class="select-style" style="display: inline">
+                  <select name="param_type_{{ param.id }}">
+                    <option value="float">float</option>
+                    <option value="int">int</option>
+                    <option value="str">str</option>
+                  </select>
+{#                  <a href="#rob" class="floatable breath" style="font-size: x-small; text-decoration: none;"> &#10060;</a>#}
+                  <button name="delete_param" value="{{ param.id }}" class="delete_button">&#10060;</button>
+                </div>
+              </div>
+            {% endfor %}
+            {# --- end components -- #}
+
+          </div>
+        </div>
+        {#  -- end parameters -- #}
+
+
+
+
+
+        <div class="card" style="flex-grow: 4">
+          <div class="breath bold">Notes</div>
+          <textarea rows="15" style="width: 95%; font-size: small">{{ notes }}</textarea>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+
+
+    {# --- end middle column -- #}
+
+  </div>
+
+
+</form>
+</body>
+
+
+{# custom javascript #}
+<script>
+    $("#id_experiment").change(
+        function(){
+{#            var answer = confirm('are you sure')#}
+{#            alert('answer was ' + answer)#}
+            window.location.href = "/main/experiment/" + this.value
+        }
+    )
+
+
+</script>
+
 </html>

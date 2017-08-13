@@ -10,7 +10,7 @@ TYPE_CHOICES = [
 ]
 
 class Experiment(models.Model):
-    name = models.CharField(max_length=CHAR_LENGTH, default='Setup')
+    name = models.CharField(max_length=CHAR_LENGTH, default='Setup', unique=True)
 
     def __str__(self):
         return self.name
@@ -21,6 +21,11 @@ class Configuration(models.Model):
     experiment = models.ForeignKey('main.Experiment')
     notes = models.TextField(null=True, blank=True)
 
+    class Meta:
+        unique_together = (('experiment', 'name'))
+
+
+
     def __str__(self):
         return self.name
 
@@ -30,6 +35,9 @@ class Parameter(models.Model):
     name = models.CharField(max_length=CHAR_LENGTH)
     value = models.CharField(max_length=CHAR_LENGTH)
     type = models.CharField(max_length=CHAR_LENGTH, choices=TYPE_CHOICES)
+
+    class Meta:
+        unique_together = (('configuration', 'name'))
 
     def __str__(self):
         return self.name

@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.shortcuts import render
 from django.db.models.functions import Lower
 
@@ -33,6 +35,10 @@ def form_getter(chosen_experiment=None):
                 **kwargs
             )
 
+        def clean(self):
+            print('form data: ', self.data)
+            return super().clean()
+
     return MyForm
 
 
@@ -42,11 +48,14 @@ class ExperimentView(FormView):
     template_name = 'silly.html'
 
     def __init__(self, *args, **kwargs):
-        self.form_class = form_getter()
+        #self.form_class = form_getter()
         self.success_url_base = '/main/experiment'
+        self.post_data = {}
 
         super().__init__(*args, **kwargs)
         #self.object = Item()
+
+    #def get_form(self, form_class=None):
 
     def get_experiment(self, experiment_id):
         return Experiment.objects.get(id=experiment_id)
@@ -63,17 +72,17 @@ class ExperimentView(FormView):
                 return []
 
         qs = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
-        print('v'*80)
-        for p in Parameter.objects.all():
-            print(p.configuration_id, p.name)
-        print('v'*80)
+        # print('v'*80)
+        # for p in Parameter.objects.all():
+        #     print(p.configuration_id, p.name)
+        # print('v'*80)
         return list(qs)
 
 
     def get_context_data(self, **kwargs):
         experiment_id = kwargs.get('experiment_id', Experiment.objects.first().id)
         config_id = kwargs.get('configuration_id')
-        form_class = form_getter(experiment_id)
+        form_class = form_getter(experiment_id, self.post_data)
         form = self.get_form(form_class)
         context = super(ExperimentView, self).get_context_data(**kwargs)
         context['experiment'] = self.get_experiment(experiment_id)
@@ -100,16 +109,16 @@ class ExperimentView(FormView):
                         context['notes'] = config.notes
                         break
 
-        from pprint import pprint
-
-        print('*'*80)
-        pprint('kwargs')
-        print(kwargs)
-        print('*'*80)
-        print('context')
-        #print('notes: '.format(repr(context['experiment'].notes)))
-        pprint(context)
-        print('*'*80)
+        # from pprint import pprint
+        #
+        # print('*'*80)
+        # pprint('kwargs')
+        # print(kwargs)
+        # print('*'*80)
+        # print('context')
+        # #print('notes: '.format(repr(context['experiment'].notes)))
+        # pprint(context)
+        # print('*'*80)
 
         '''
         Okay.  Here's what's going on.  I just got the url to change
@@ -131,7 +140,12 @@ class ExperimentView(FormView):
         return self.render_to_response(context)
 
     def post(self, request, **kwargs):
-        print('post {}'.format(kwargs))
+        self.post_data = request.POST
+        print('kwargs {}'.format(kwargs))
+        print()
+        #pprint(request._post)
+        print()
+        pprint(request.POST)
         return super(ExperimentView, self).post(request, **kwargs)
 
     def get_initial(self):
