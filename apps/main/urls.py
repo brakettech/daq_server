@@ -7,6 +7,7 @@ from apps.main.views import (
     ConfigListView,
     DeleteExperimentView,
     CloneExperimentView,
+    ParamListView,
 )
 from apps.main import views
 from rest_framework import routers
@@ -21,8 +22,8 @@ urlpatterns = [
     url(r'^experiment/(?P<experiment_id>\d+)/?$', ConfigListView.as_view()),
     url(r'^clone_experiment/(?P<experiment_id>\d+)/?$', CloneExperimentView.as_view()),
     url(r'^new_experiment/?$', NewExperimentView.as_view()),
-    #url(r'^delete_experiment/(?P<experiment_id>\d+)/?$', DeleteExperimentView.as_view()),
     url(r'^delete_experiment/(?P<pk>\d+)/?$', DeleteExperimentView.as_view()),
+    url(r'^config/(?P<config_id>\d+)/?$', ParamListView.as_view()),
     # url(r'^experiment/(?P<experiment_id>\d+)/(?P<configuration_id>\d+)/?$', ExperimentView.as_view()),
     # url(r'parameters/(?P<configuration_id>\d+)*$', views.ParamList.as_view()),
     # #url(r'parameters', views.ParamList.as_view()),

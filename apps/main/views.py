@@ -43,14 +43,40 @@ class NewExperimentView(CreateView):
     def get_success_url(self):
         return r'/main/experiment'
 
-class CloneExperimentView(View):
-    def get(self, request, **kwargs):
-        experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
-        # I NEED TO PROVIDE A NEW NAME ARGUMENT TO THE EXPERIMENT ID
-        experiment.clone()
-        print()
-        print('cloning for {}'.format(kwargs))
-        return redirect('/main/experiment')
+
+class CloneExperimentView(FormView):
+    template_name = 'experiment_update_form.html'
+    form_class = NewExperimentForm
+
+    def form_valid(self, form):
+        experiment = Experiment.objects.get(id=int(self.kwargs['experiment_id']))
+        experiment.clone(form.cleaned_data['name'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return r'/main/experiment'
+
+
+# class CloneExperimentView(TemplateView):
+#     template_name = 'experiment_update_form.html'
+#
+#     #def get_context_data(self, **kwargs):
+#     def get(self, request, **kwargs):
+#         experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
+#         print()
+#         print('cloning for {}'.format(kwargs))
+#         context = self.get_context_data()
+#         return self.render_to_response(context)
+#         return redirect('/main/experiment')
+
+# class CloneExperimentView(View):
+#     def get(self, request, **kwargs):
+#         experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
+#         # I NEED TO PROVIDE A NEW NAME ARGUMENT TO THE EXPERIMENT ID
+#         experiment.clone()
+#         print()
+#         print('cloning for {}'.format(kwargs))
+#         return redirect('/main/experiment')
 
 
 # class NewExperimentView(FormView):
@@ -84,6 +110,93 @@ class ConfigListView(ListView):
 
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
+
+# def form_getter(params):
+#     class ParamForm(forms.Form):
+#         type_map = {
+#             'str': forms.CharField,
+#             'int': forms.IntegerField,
+#             'float': forms.FloatField,
+#         }
+#
+#         def __init__(self):
+#             super().__init__()
+#             return
+#             for param in params:
+#                 field_class = self.type_map[param.type]
+#                 self.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+#
+#     return ParamForm
+
+class ParamForm(forms.Form):
+    type_map = {
+        'str': forms.CharField,
+        'int': forms.IntegerField,
+        'float': forms.FloatField,
+    }
+
+class ParamListView(FormView):
+    template_name = 'parameter_list.html'
+    form_class = ParamForm
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._success_url = ''
+
+    def get_success_url(self):
+        return self._success_url
+
+    def get_form(self):
+        form = super().get_form()
+        self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
+        params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
+        for param in params:
+            field_class = form.type_map[param.type]
+            form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+        return context
+
+    def form_valid(self, form):
+        for key, value in form.cleaned_data.items():
+            param_id = int(key.replace('params', ''))
+            param = Parameter.objects.get(id=param_id)
+            param.value = value
+            param.save()
+        return super().form_valid(form)
+
+    def post(self, request, **kwargs):
+        return super().post(request, **kwargs)
+    #     return self.get(*args, **kwargs)
+
+    """
+    NOW I NEED TO GET NEW CONFIGURATION AND CONFIGURATION CLONING GOING
+    THEN I NEED TO ADD NEW PARAMETER CODE
+    FINALLY I NEED TO WRITE TAGGING CODE
+    I THINK I'LL KEEP A LIST OF TAGGED FILES IN THE DATABASE
+    """
+
+
+
+# class ParamListView(ListView):
+#     model = Parameter
+#
+#     def get_queryset(self):
+#         return Parameter.objects.filter(
+#             configuration_id=int(self.kwargs['config_id'])
+#         ).order_by(Lower('name'))
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+#         return context
+#
+#     def post(self, *args, **kwargs):
+#         return self.get(*args, **kwargs)
+
+
 
 # class ExperimentEditView(FormView):
 #     template_name = 'experiment_edit.html'

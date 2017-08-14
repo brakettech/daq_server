@@ -16,10 +16,11 @@ class Experiment(models.Model):
         ordering = ['name']
 
     @transaction.atomic
-    def clone(self, experiment_id):
-        e = Configuration.objects.get(id=self.id)
+    def clone(self, new_name):
+        e = Experiment.objects.get(id=self.id)
         configs = Configuration.objects.filter(experiment=e)
         e.id = None
+        e.name = new_name
         e.save()
         for c in configs:
             c.clone(e.id)
@@ -38,7 +39,10 @@ class Configuration(models.Model):
         ordering = ['name']
 
     @transaction.atomic
-    def clone(self, experiment_id):
+    def clone(self, experiment_id=None, new_name=None):
+        if {experiment_id, new_name} == {None}:
+            raise ValueError('Must supply either experiment_id or new_name')
+
         c = Configuration.objects.get(id=self.id)
         params = Parameter.objects.filter(configuration=c)
         c.id = None
