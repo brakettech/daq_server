@@ -35,10 +35,6 @@
       text-decoration: none;
       color: inherit;
     }
-{#    a:visited, a:link{#}
-{#      text-decoration: none;#}
-{#      color: inherit;#}
-{#    }#}
 
   </style>
 
@@ -46,30 +42,36 @@
 <html>
 <body>
 <div class="container">
-  <div class="panel" style="flex-grow: 2">
-    <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">
-      <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
-      <span style="text-align: center">Configuration: {{ config.name }}</span>
-      <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
-      <form action="" method="post"> {% csrf_token %}
-        {{ form.errors }}
-        {{ form.non_field_errors }}
-        {% for field in form%}
-          <div>
-            <a class="highlightable" href="/main/change_param/{{ field.name }}">{{ field.label }}</a> {{ field }}
-          </div>
-
-        {% endfor %}
-      <button type="submit">Save</button>
-      </form>
-      </div>
-{#      {{ form.as_p }}#}
-    </div>
+  <div style="flex-grow: 1"></div>
+  <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
+      <h2 style="text-align: center">Modify "{{ object.name }}" Parameter</h2>
+            <form action="" method="post">
+              {%  csrf_token %}
+              {{ form.as_p }}
+              <button type="'submit" name="delete">Save</button>
+            </form>
+{#      {% if configs %}#}
+{#        The following configurations and all their parameters will be deleted#}
+{#      {% endif %}#}
+{#      <ul>#}
+{#        {% for config in configs %}#}
+{#          <li>{{ config.name }}</li>#}
+{#        {% endfor %}#}
+{#      </ul>#}
+{#      <form action="/main/delete_experiment/{{ experiment.id }}" method="post">#}
+{#        {%  csrf_token %}#}
+{#        {{ form }}#}
+{#        <button type="'submit" name="delete">Delete</button>#}
+{#      </form>#}
+{#      <form action="/main/experiment/" method="get">#}
+{#        {%  csrf_token %}#}
+{#        <button type="'submit">Cancel</button>#}
+{#      </form>#}
+
     </div>
   </div>
-  <div class="card" style="flex-grow: 1"></div>
+  <div style="flex-grow: 1"></div>
 </div>
 </body>
 </html>
@@ -83,4 +85,3 @@
 {#    <div>{{ obj.name }}</div>#}
 {#  {% endfor %}#}
 {#</div>#}
-

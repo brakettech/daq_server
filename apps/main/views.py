@@ -6,7 +6,7 @@ from django.db.models.functions import Lower
 
 # Create your views here.
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views import View
 from django.shortcuts import render
 #from apps.main.models import Experiment, Configuration, Parameter, Description
@@ -82,13 +82,6 @@ class NewExperimentView(CreateView):
     def get_success_url(self):
         return r'/main/experiment'
 
-# class NewConfigView(CreateView):
-#     model = Configuration
-#     fields = ['name']
-#
-#     def get_success_url(self):
-#         return r'/main/experiment/{}'.format(self.get_context_data()['configuration'].experiment_id)
-
 
 class CloneExperimentView(FormView):
     template_name = 'experiment_update_form.html'
@@ -139,23 +132,18 @@ class ConfigListView(ListView):
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
+class ChangeParamView(UpdateView):
+    model = Parameter
+    fields = ['name', 'type']
+    template_name = 'update_parameter_view.html'
 
-# class NewParamForm(forms.ModelForm):
-#     class Meta:
-#         model = Parameter
-#         fields = ['name', 'type']
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         print('context', context)
-#         print('kwargs', self.kwargs)
-#         return context
+    def get_object(self):
+        return Parameter.objects.get(id=int(self.kwargs['param_id']))
 
-class NewParamForm(forms.ModelForm):
-    class Meta:
-        model = Parameter
-        fields = ['name', 'type', 'configuration']
-        widgets = {'configuration': forms.HiddenInput()}
+    def get_success_url(self):
+        param = Parameter.objects.get(id=int(self.kwargs['param_id']))
+        return '/main/config/{}'.format(param.configuration_id)
+
 
 class NewParamView(CreateView):
     model = Parameter
