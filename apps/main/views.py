@@ -151,9 +151,22 @@ class ConfigListView(ListView):
 #         print('kwargs', self.kwargs)
 #         return context
 
+class NewParamForm(forms.ModelForm):
+    class Meta:
+        model = Parameter
+        fields = ['name', 'type', 'configuration']
+        widgets = {'configuration': forms.HiddenInput()}
+
 class NewParamView(CreateView):
     model = Parameter
-    fields = ['name', 'type']
+    fields = ['name', 'type', 'configuration']
+
+    def get_form(self):
+        form = super().get_form()
+        form.fields['configuration'].widget = forms.HiddenInput()
+        form.fields['configuration'].initial = int(self.kwargs['config_id'])
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['config_id'] = self.kwargs['config_id']
@@ -163,13 +176,34 @@ class NewParamView(CreateView):
         print('&'*80)
         return context
 
+    def get_success_url(self):
+        return '/main/config/{}'.format(self.kwargs['config_id'])
+
     def form_valid(self, form):
-        Parameter(
-            configuration_id=int(self.kwargs['config_id']),
-            name=form.cleaned_data['name'],
-            type=form.cleaned_data['type'],
-        ).save()
-        return self.render_to_response(self.get_context_data())
+        print('\n******************** form valid ************')
+        print(form)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print('\n******************** form invalid ************')
+        print('errors', form.errors)
+        print('data', form.data)
+        return super().form_invalid(form)
+
+    def get(self, *args, **kwargs):
+        print('GET HIT')
+        return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        print('POST HIT')
+        return super().post(*args, **kwargs)
+
+    #     Parameter(
+    #         configuration_id=int(self.kwargs['config_id']),
+    #         name=form.cleaned_data['name'],
+    #         type=form.cleaned_data['type'],
+    #     ).save()
+    #     return self.render_to_response(self.get_context_data())
 
 
 
