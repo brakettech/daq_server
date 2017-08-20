@@ -13,28 +13,27 @@ class NewExperimentForm(forms.ModelForm):
         model = Experiment
         fields = ['name']
 
-class NewConfigForm(forms.ModelForm):
-    class Meta:
-        model = Configuration
-        fields = ['name']
+# class NewConfigForm(forms.ModelForm):
+#     class Meta:
+#         model = Configuration
+#         fields = ['name']
 
 
-class NewConfigView(FormView):
-    template_name = 'configuration_form.html'
-    form_class = NewConfigForm
+class NewConfigView(CreateView):
+    # template_name = 'configuration_form.html'
+    model = Configuration
+    fields = ['name', 'experiment']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['experiment_id'] = self.kwargs['experiment_id']
         return context
 
-    def form_valid(self, form):
-        Configuration(
-            name=form.cleaned_data['name'],
-            experiment_id=int(self.kwargs['experiment_id'])
-
-        ).save()
-        return super().form_valid(form)
+    def get_form(self):
+        form = super().get_form()
+        form.fields['experiment'].widget = forms.HiddenInput()
+        form.fields['experiment'].initial = int(self.kwargs['experiment_id'])
+        return form
 
     def get_success_url(self):
         return r'/main/experiment/{}'.format(self.kwargs['experiment_id'])
@@ -87,9 +86,14 @@ class CloneExperimentView(FormView):
     def get_success_url(self):
         return r'/main/experiment'
 
+class CloneConfigForm(forms.ModelForm):
+    class Meta:
+        model = Configuration
+        fields = ['name']
+
 class CloneConfigView(FormView):
     template_name = 'configuration_update_form.html'
-    form_class = NewConfigForm
+    form_class = CloneConfigForm
 
     def form_valid(self, form):
         config = Configuration.objects.get(id=int(self.kwargs['config_id']))
@@ -164,18 +168,6 @@ class NewParamView(CreateView):
 
     def get_success_url(self):
         return '/main/config/{}'.format(self.kwargs['config_id'])
-
-    def form_valid(self, form):
-        return super().form_valid(form)
-
-    def get(self, *args, **kwargs):
-        print('GET HIT')
-        return super().get(*args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        print('POST HIT')
-        return super().post(*args, **kwargs)
-
 
 class ParamForm(forms.Form):
     type_map = {
