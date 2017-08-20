@@ -6,12 +6,13 @@ from django.db.models.functions import Lower
 
 # Create your views here.
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
 from django.views import View
 from django.shortcuts import render
 #from apps.main.models import Experiment, Configuration, Parameter, Description
-from apps.main.models import Parameter
+from apps.main.models import Parameter, TYPE_CHOICES
 from rest_framework import viewsets, views, generics
-from apps.main.models import Parameter
+from apps.main.models import Parameter, CHAR_LENGTH
 from apps.main.serializers import ParameterSerializer
 from apps.main.models import Experiment, Configuration
 
@@ -114,36 +115,6 @@ class CloneConfigView(FormView):
     def get_success_url(self):
         return r'/main/experiment/{}'.format(self.experiment_id)
 
-# class CloneExperimentView(TemplateView):
-#     template_name = 'experiment_update_form.html'
-#
-#     #def get_context_data(self, **kwargs):
-#     def get(self, request, **kwargs):
-#         experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
-#         print()
-#         print('cloning for {}'.format(kwargs))
-#         context = self.get_context_data()
-#         return self.render_to_response(context)
-#         return redirect('/main/experiment')
-
-# class CloneExperimentView(View):
-#     def get(self, request, **kwargs):
-#         experiment = Experiment.objects.get(id=int(kwargs['experiment_id']))
-#         # I NEED TO PROVIDE A NEW NAME ARGUMENT TO THE EXPERIMENT ID
-#         experiment.clone()
-#         print()
-#         print('cloning for {}'.format(kwargs))
-#         return redirect('/main/experiment')
-
-
-# class NewExperimentView(FormView):
-#     template_name = 'new_experiment.html'
-#     form_class = NewExperimentForm
-#
-#     def form_valid(self, form):
-#         Experiment.objects.create(name=form.cleaned_data['name'])
-#         return super().form_valid(form)
-#
 
 class ExperimentListView(ListView):
     model = Experiment
@@ -168,22 +139,109 @@ class ConfigListView(ListView):
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
-# def form_getter(params):
-#     class ParamForm(forms.Form):
-#         type_map = {
-#             'str': forms.CharField,
-#             'int': forms.IntegerField,
-#             'float': forms.FloatField,
-#         }
+
+# class NewParamForm(forms.ModelForm):
+#     class Meta:
+#         model = Parameter
+#         fields = ['name', 'type']
 #
-#         def __init__(self):
-#             super().__init__()
-#             return
-#             for param in params:
-#                 field_class = self.type_map[param.type]
-#                 self.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         print('context', context)
+#         print('kwargs', self.kwargs)
+#         return context
+
+class NewParamView(CreateView):
+    model = Parameter
+    fields = ['name', 'type']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['config_id'] = self.kwargs['config_id']
+        print('&'*80)
+        print('context', context)
+        print('kwargs', self.kwargs)
+        print('&'*80)
+        return context
+
+    def form_valid(self, form):
+        Parameter(
+            configuration_id=int(self.kwargs['config_id']),
+            name=form.cleaned_data['name'],
+            type=form.cleaned_data['type'],
+        ).save()
+        return self.render_to_response(self.get_context_data())
+
+
+
+    # def get_success_url(self):
+    #     return self._success_url
+    #
+    # def get_form(self):
+    #     form = super().get_form()
+    #     self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
+    #     params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
+    #     for param in params:
+    #         field_class = form.type_map[param.type]
+    #         form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+    #     return form
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+    #     return context
+    #
+    # def form_valid(self, form):
+    #     for key, value in form.cleaned_data.items():
+    #         param_id = int(key.replace('params', ''))
+    #         param = Parameter.objects.get(id=param_id)
+    #         param.value = value
+    #         param.save()
+    #     return super().form_valid(form)
+
+
+# class NewParamForm(forms.Form):
+#     type_map = {
+#         'str': forms.CharField,
+#         'int': forms.IntegerField,
+#         'float': forms.FloatField,
+#     }
+#     name = forms.CharField(max_length=CHAR_LENGTH)
+#     type = forms.ChoiceField(choices=TYPE_CHOICES, widget=forms.Select)
 #
-#     return ParamForm
+# class NewParamView(FormView):
+#     template_name = 'parameter_form.html'
+#     form_class = NewParamForm
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self._success_url = ''
+
+    # def get_success_url(self):
+    #     return self._success_url
+    #
+    # def get_form(self):
+    #     form = super().get_form()
+    #     self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
+    #     params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
+    #     for param in params:
+    #         field_class = form.type_map[param.type]
+    #         form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+    #     return form
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+    #     return context
+    #
+    # def form_valid(self, form):
+    #     for key, value in form.cleaned_data.items():
+    #         param_id = int(key.replace('params', ''))
+    #         param = Parameter.objects.get(id=param_id)
+    #         param.value = value
+    #         param.save()
+    #     return super().form_valid(form)
+    #
+    # def post(self, request, **kwargs):
+    #     return super().post(request, **kwargs)
 
 class ParamForm(forms.Form):
     type_map = {

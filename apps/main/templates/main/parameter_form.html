@@ -42,30 +42,17 @@
 <html>
 <body>
 <div class="container">
-  <div class="panel" style="flex-grow: 2">
-    <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">
-      <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
-      <span style="text-align: center">Configuration: {{ config.name }}</span>
-      <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
-      <form action="" method="post"> {% csrf_token %}
-        {{ form.errors }}
-        {{ form.non_field_errors }}
-        {% for field in form%}
-          <div>
-            {{ field.label }} {{ field }}
-          </div>
-
-        {% endfor %}
-      <button type="submit">Save</button>
-      </form>
-      </div>
-{#      {{ form.as_p }}#}
-    </div>
+  <div style="flex-grow: 1"></div>
+  <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
+      <h2 style="text-align: center">Create New Parameter</h2>
+      <form action="/main/new_param/{{ config_id }}" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
+      </form>
     </div>
   </div>
-  <div class="card" style="flex-grow: 1"></div>
+  <div style="flex-grow: 1"></div>
 </div>
 </body>
 </html>
@@ -79,4 +66,3 @@
 {#    <div>{{ obj.name }}</div>#}
 {#  {% endfor %}#}
 {#</div>#}
-
