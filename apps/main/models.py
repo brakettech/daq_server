@@ -44,6 +44,10 @@ class Configuration(models.Model):
             raise ValueError('Must supply either experiment_id or new_name')
 
         c = Configuration.objects.get(id=self.id)
+        if experiment_id is None:
+            experiment_id = c.experiment_id
+        if new_name is not None:
+            c.name = new_name
         params = Parameter.objects.filter(configuration=c)
         c.id = None
         c.experiment_id = experiment_id

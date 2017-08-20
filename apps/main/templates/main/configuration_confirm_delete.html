@@ -16,10 +16,6 @@
       margin: 5px;
       padding: 10px;
     }
-    .editable {
-      display: flex;
-      justify-content: space-between;
-    }
 
     .container {
       display: flex;
@@ -49,19 +45,17 @@
   <div style="flex-grow: 1"></div>
   <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <h2 style="text-align: center">Confiurations for "{{ experiment.name }}" Experimemt</h2>
-      {%  for obj in object_list %}
-        <div class="highlightable editable">
-          <a href="/main/config/{{ obj.id }}">{{ obj.name }}</a>
-          <div>
-            <a href="/main/clone_config/{{ obj.id }}" class="breath"> <span style="font-size: 20px;"> &#x2398;</span></a>
-            <a href="/main/delete_config/{{ obj.id }}" class="breath"> <span style="color: red"> &#x2716;</span></a>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-    <div class="card">
-      <div class="highlightable"><a href="/main/new_confiuragion">Create New Configuration</a></div>
+      <h2 style="text-align: center">Delete "{{ configuration.name }}" Configuration</h2>
+      <form action="/main/delete_experiment/{{ configuration.experiment_id }}" method="post">
+        {%  csrf_token %}
+        {{ form }}
+        <button type="'submit" name="delete">Delete</button>
+      </form>
+      <form action="/main/experiment/{{ experiment_id }}" method="get">
+        {%  csrf_token %}
+        <button type="'submit">Cancel</button>
+      </form>
+
     </div>
   </div>
   <div style="flex-grow: 1"></div>
@@ -78,4 +72,3 @@
 {#    <div>{{ obj.name }}</div>#}
 {#  {% endfor %}#}
 {#</div>#}
-

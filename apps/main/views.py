@@ -25,6 +25,10 @@ class NewExperimentForm(forms.ModelForm):
         model = Experiment
         fields = ['name']
 
+class NewConfigForm(forms.ModelForm):
+    class Meta:
+        model = Configuration
+        fields = ['name']
 
 class DeleteExperimentView(DeleteView):
     model = Experiment
@@ -35,6 +39,15 @@ class DeleteExperimentView(DeleteView):
         context['configs'] = Configuration.objects.filter(experiment=context['experiment']).order_by(Lower('name'))
         return context
 
+class DeleteConfigView(DeleteView):
+    model = Configuration
+    # success_url = '/main/experiment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['params'] = Parameter.objects.filter(config=context['configuration']).order_by(Lower('name'))
+        # context['params'] = Parameter.objects.filter(config=context['configuration']).order_by(Lower('name'))
+        return context
 
 class NewExperimentView(CreateView):
     model = Experiment
@@ -56,6 +69,18 @@ class CloneExperimentView(FormView):
     def get_success_url(self):
         return r'/main/experiment'
 
+class CloneConfigView(FormView):
+    template_name = 'configuration_update_form.html'
+    form_class = NewConfigForm
+
+    def form_valid(self, form):
+        config = Configuration.objects.get(id=int(self.kwargs['config_id']))
+        config.clone(new_name=form.cleaned_data['name'])
+        self.experiment_id = config.experiment_id
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return r'/main/experiment/{}'.format(self.experiment_id)
 
 # class CloneExperimentView(TemplateView):
 #     template_name = 'experiment_update_form.html'
