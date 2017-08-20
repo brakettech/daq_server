@@ -45,34 +45,24 @@
   <div style="flex-grow: 1"></div>
   <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <h2 style="text-align: center">Modify "{{ object.name }}" Parameter</h2>
-            <form action="" method="post">
-              {%  csrf_token %}
-              {{ form.as_p }}
-              <button type="'submit" name="delete">Save</button>
-            </form>
-            <form action="/main/delete_param/{{ object.id }}" method="get">
-              {%  csrf_token %}
-              <button type="'submit" name="delete">Delete</button>
-            </form>
-
-{#      {% if configs %}#}
-{#        The following configurations and all their parameters will be deleted#}
-{#      {% endif %}#}
-{#      <ul>#}
-{#        {% for config in configs %}#}
-{#          <li>{{ config.name }}</li>#}
-{#        {% endfor %}#}
-{#      </ul>#}
-{#      <form action="/main/delete_experiment/{{ experiment.id }}" method="post">#}
-{#        {%  csrf_token %}#}
-{#        {{ form }}#}
-{#        <button type="'submit" name="delete">Delete</button>#}
-{#      </form>#}
-{#      <form action="/main/experiment/" method="get">#}
-{#        {%  csrf_token %}#}
-{#        <button type="'submit">Cancel</button>#}
-{#      </form>#}
+      <h2 style="text-align: center">Delete "{{ parameter.name }}" Parameter</h2>
+      {% if configs %}
+        The following configurations and all their parameters will be deleted
+      {% endif %}
+      <ul>
+        {% for config in configs %}
+          <li>{{ config.name }}</li>
+        {% endfor %}
+      </ul>
+      <form action="/main/delete_param/{{ parameter.id }}" method="post">
+        {%  csrf_token %}
+        {{ form }}
+        <button type="'submit" name="delete">Delete</button>
+      </form>
+      <form action="/main/experiment/" method="get">
+        {%  csrf_token %}
+        <button type="'submit">Cancel</button>
+      </form>
 
     </div>
   </div>

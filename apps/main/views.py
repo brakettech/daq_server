@@ -1,5 +1,6 @@
 from pprint import pprint
 
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.db.models.functions import Lower
 
@@ -75,6 +76,25 @@ class DeleteConfigView(DeleteView):
     def get_success_url(self):
         return r'/main/experiment/{}'.format(self.get_context_data()['configuration'].experiment_id)
 
+class DeleteParamView(DeleteView):
+    model = Parameter
+    # success_url = '/main/experiment'
+
+    # def get_context_data(self, **kwargs):
+    #     param = self.get_object()
+    #     context['param_id'] = param.config_id
+    #     return context
+
+    def get_object(self, queryset=None):
+        param = Parameter.objects.get(id=int(self.kwargs['param_id']))
+        self.config_id = param.configuration_id
+        return param
+
+    def get_success_url(self):
+        return r'/main/config/{}'.format(self.config_id)
+
+
+
 class NewExperimentView(CreateView):
     model = Experiment
     fields = ['name']
@@ -132,6 +152,7 @@ class ConfigListView(ListView):
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
+
 class ChangeParamView(UpdateView):
     model = Parameter
     fields = ['name', 'type']
@@ -141,8 +162,17 @@ class ChangeParamView(UpdateView):
         return Parameter.objects.get(id=int(self.kwargs['param_id']))
 
     def get_success_url(self):
-        param = Parameter.objects.get(id=int(self.kwargs['param_id']))
-        return '/main/config/{}'.format(param.configuration_id)
+        param = self.get_object()
+        url = '/main/config/{}'.format(param.configuration_id)
+        print('>>>>>>>>> url {}'.format(url))
+        return url
+
+    def form_valid(self, form):
+        param = self.get_object()
+        if Parameter.objects.filter(configuration=param.configuration, name=form.data['name']).exists():
+            form.add_error('name', 'A parameter named "{}" already exists'.format(form.data['name']))
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
 
 class NewParamView(CreateView):
