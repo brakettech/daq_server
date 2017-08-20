@@ -45,17 +45,11 @@
   <div style="flex-grow: 1"></div>
   <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <h2 style="text-align: center">Delete "{{ configuration.name }}" Configuration</h2>
-      <form action="/main/delete_config/{{ configuration.id }}" method="post">
-        {%  csrf_token %}
-        {{ form }}
-        <button type="'submit" name="delete">Delete</button>
+      <h2 style="text-align: center">Create New Configuration</h2>
+      <form action="/main/new_config/{{ experiment_id }}" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
       </form>
-      <form action="/main/experiment/{{ configuration.experiment_id }}" method="get">
-        {%  csrf_token %}
-        <button type="'submit">Cancel</button>
-      </form>
-
     </div>
   </div>
   <div style="flex-grow: 1"></div>

@@ -49,7 +49,7 @@
   <div style="flex-grow: 1"></div>
   <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <h2 style="text-align: center">Confiurations for "{{ experiment.name }}" Experimemt</h2>
+      <h2 style="text-align: center">Configurations for "{{ experiment.name }}" Experiment</h2>
       {%  for obj in object_list %}
         <div class="highlightable editable">
           <a href="/main/config/{{ obj.id }}">{{ obj.name }}</a>
@@ -61,7 +61,7 @@
       {% endfor %}
     </div>
     <div class="card">
-      <div class="highlightable"><a href="/main/new_confiuragion">Create New Configuration</a></div>
+      <div class="highlightable"><a href="/main/new_config/{{ experiment.id }}">Create New Configuration</a></div>
     </div>
   </div>
   <div style="flex-grow: 1"></div>
