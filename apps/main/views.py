@@ -21,7 +21,6 @@ class NewExperimentForm(forms.ModelForm):
 
 
 class NewConfigView(CreateView):
-    # template_name = 'configuration_form.html'
     model = Configuration
     fields = ['name', 'experiment']
 
@@ -76,7 +75,7 @@ class NewExperimentView(CreateView):
 
 
 class CloneExperimentView(FormView):
-    template_name = 'experiment_update_form.html'
+    template_name = '{}/experiment_update_form.html'.format(APP_NAME)
     form_class = NewExperimentForm
 
     def form_valid(self, form):
@@ -133,7 +132,7 @@ class ConfigListView(ListView):
 class ChangeParamView(UpdateView):
     model = Parameter
     fields = ['name', 'type']
-    template_name = 'update_parameter_view.html'
+    template_name = '{}/update_parameter_view.html'.format(APP_NAME)
 
     def get_object(self):
         return Parameter.objects.get(id=int(self.kwargs['param_id']))
