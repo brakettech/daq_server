@@ -7,6 +7,7 @@ from apps.main.models import Experiment, Configuration
 from django import forms
 from django.views.generic import FormView, DeleteView, CreateView, UpdateView
 
+APP_NAME= 'main'
 
 class NewExperimentForm(forms.ModelForm):
     class Meta:
@@ -92,7 +93,7 @@ class CloneConfigForm(forms.ModelForm):
         fields = ['name']
 
 class CloneConfigView(FormView):
-    template_name = 'configuration_update_form.html'
+    template_name = '{}/configuration_update_form.html'.format(APP_NAME)
     form_class = CloneConfigForm
 
     def form_valid(self, form):
@@ -178,7 +179,7 @@ class ParamForm(forms.Form):
 
 
 class ParamListView(FormView):
-    template_name = 'parameter_list.html'
+    template_name = '{}/parameter_list.html'.format(APP_NAME)
     form_class = ParamForm
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
