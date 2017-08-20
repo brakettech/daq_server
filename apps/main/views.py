@@ -64,6 +64,9 @@ class DeleteParamView(DeleteView):
 
     def get_success_url(self):
         return r'/main/config/{}'.format(self.config_id)
+    
+    OKAY.  THE NEXT THING I WANT TO WORK ON IS CONSOLIDATING ALL MY TEMPLATES
+    SO THAT THEY CAN INHERIT FROM COMMON BASES
 
 
 class NewExperimentView(CreateView):
