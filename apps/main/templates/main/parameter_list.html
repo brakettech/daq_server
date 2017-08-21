@@ -1,5 +1,15 @@
 {%  extends "main_base.html" %}
 
+{% block nav %}
+  {% url 'experiments' as the_url %}
+  {% url 'experiment' experiment_id=config.experiment.id as this_experiment %}
+  {% url 'config' config_id=config.id as this_config %}
+
+  <div class="pill"> <a href="{{ the_url }}">Experiments</a> </div>
+  <div class="pill"> <a href="{{ this_experiment }}">{{ config.experiment.name }}</a> </div>
+  <div class="pill"> <a href="{{ this_config }}">{{ config.name }}</a> </div>
+{% endblock %}
+
 {% block content %}
     <div class="panel" style="flex-grow: 2">
       <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">

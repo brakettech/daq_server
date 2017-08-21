@@ -1,5 +1,11 @@
 {%  extends "main_base.html" %}
 
+{% block nav %}
+  {% url 'experiments' as the_url %}
+
+  <div class="pill"> <a href="{{ the_url }}">Experiments</a> </div>
+{% endblock %}
+
 {% block content %}
     <div style="flex-grow: 1"></div>
     <div class="panel" style="flex-grow: 15">
