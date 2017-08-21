@@ -1,68 +1,15 @@
-<!doctype html>
-<head>
-  {# get the required files from 3rd party sources #}
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
+{%  extends "main_base.html" %}
 
-  <style>
-
-    body {
-      /*font-family: 'Roboto', sans-serif;*/
-      font-family: 'Open Sans', sans-serif;
-      background-color: #F2F2F2;
-    }
-    .card {
-      background-color: white;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
-      margin: 5px;
-      padding: 10px;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-    }
-    .panel {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-    }
-    .highlightable{}
-    .highlightable:hover{
-      background-color: #F2F2F2;
-    }
-    a:hover, a:visited, a:link, a:active {
-      text-decoration: none;
-      color: inherit;
-    }
-
-  </style>
-
-</head>
-<html>
-<body>
-<div class="container">
-  <div style="flex-grow: 1"></div>
-  <div class="panel" style="flex-grow: 15">
-    <div class="card">
-      <h2 style="text-align: center">Clone Experiment</h2>
-      <form action="" method="post">{% csrf_token %}
-        New Name {{ form.name }}
-        <button type="submit">Clone</button>
-      </form>
+{% block content %}
+    <div style="flex-grow: 1"></div>
+    <div class="panel" style="flex-grow: 15">
+      <div class="card">
+        <h2 style="text-align: center">Clone Experiment</h2>
+        <form action="" method="post">{% csrf_token %}
+          New Name {{ form.name }}
+          <button type="submit">Clone</button>
+        </form>
+      </div>
     </div>
-  </div>
-  <div style="flex-grow: 1"></div>
-</div>
-</body>
-</html>
-
-
-
-{#<div style="flex-grow: "#}
-{#<div class="flex_col">#}
-{#  <h1>Experiments</h1>#}
-{#  {%  for obj in object_list %}#}
-{#    <div>{{ obj.name }}</div>#}
-{#  {% endfor %}#}
-{#</div>#}
+    <div style="flex-grow: 1"></div>
+{% endblock %}

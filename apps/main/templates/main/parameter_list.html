@@ -1,86 +1,26 @@
-<!doctype html>
-<head>
-  {# get the required files from 3rd party sources #}
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
+{%  extends "main_base.html" %}
 
-  <style>
-
-    body {
-      /*font-family: 'Roboto', sans-serif;*/
-      font-family: 'Open Sans', sans-serif;
-      background-color: #F2F2F2;
-    }
-    .card {
-      background-color: white;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
-      margin: 5px;
-      padding: 10px;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-    }
-    .panel {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-    }
-    .highlightable{}
-    .highlightable:hover{
-      background-color: #F2F2F2;
-    }
-    a:hover, a:visited, a:link, a:active {
-      text-decoration: none;
-      color: inherit;
-    }
-{#    a:visited, a:link{#}
-{#      text-decoration: none;#}
-{#      color: inherit;#}
-{#    }#}
-
-  </style>
-
-</head>
-<html>
-<body>
-<div class="container">
-  <div class="panel" style="flex-grow: 2">
-    <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">
-      <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
-      <span style="text-align: center">Configuration: {{ config.name }}</span>
-      <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
-      <form action="" method="post"> {% csrf_token %}
-        {{ form.errors }}
-        {{ form.non_field_errors }}
-        {% for field in form%}
-          <div>
-            <a class="highlightable" href="/main/change_param/{{ field.name }}">{{ field.label }}</a> {{ field }}
-          </div>
-
-        {% endfor %}
-      <button type="submit">Save</button>
-      </form>
+{% block content %}
+    <div class="panel" style="flex-grow: 2">
+      <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">
+        <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
+        <span style="text-align: center">Configuration: {{ config.name }}</span>
+        <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
+        <form action="" method="post"> {% csrf_token %}
+          {{ form.errors }}
+          {{ form.non_field_errors }}
+          {% for field in form%}
+            <div>
+              <a class="highlightable" href="/main/change_param/{{ field.name }}">{{ field.label }}</a> {{ field }}
+            </div>
+          {% endfor %}
+        <button type="submit">Save</button>
+        </form>
+        </div>
       </div>
-{#      {{ form.as_p }}#}
+      <div class="card">
+        <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
+      </div>
     </div>
-    <div class="card">
-      <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
-    </div>
-  </div>
-  <div class="card" style="flex-grow: 1"></div>
-</div>
-</body>
-</html>
-
-
-
-{#<div style="flex-grow: "#}
-{#<div class="flex_col">#}
-{#  <h1>Experiments</h1>#}
-{#  {%  for obj in object_list %}#}
-{#    <div>{{ obj.name }}</div>#}
-{#  {% endfor %}#}
-{#</div>#}
-
+    <div class="card" style="flex-grow: 1"></div>
+{% endblock %}
