@@ -1,0 +1,5 @@
+name: daq
+dependencies:
+  - python=3.6
+  - pip:
+    - Django
