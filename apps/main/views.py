@@ -112,6 +112,9 @@ class ExperimentListView(ListView):
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
+    def get_queryset(self):
+        return Experiment.objects.all().order_by(Lower('name'))
+
 
 class ConfigListView(ListView):
     model = Configuration

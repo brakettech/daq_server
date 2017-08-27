@@ -13,11 +13,7 @@ from apps.main.views import (
     NewConfigView,
     NewParamView, ChangeParamView, DeleteParamView)
 from apps.main import views
-from rest_framework import routers
 
-# router = routers.DefaultRouter()
-# router.register(r'parameters', views.ParamList.as_view())
-#router.register(r'parameter', views.ParamDetail)
 
 urlpatterns = [
     url(r'^experiment/?$', ExperimentListView.as_view(), name='experiments'),
