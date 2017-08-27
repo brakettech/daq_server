@@ -1,3 +1,6 @@
+from pprint import pprint
+
+from django.db import transaction
 from django.db.models.functions import Lower
 
 from django.views.generic import ListView, DetailView
@@ -14,10 +17,6 @@ class NewExperimentForm(forms.ModelForm):
         model = Experiment
         fields = ['name']
 
-# class NewConfigForm(forms.ModelForm):
-#     class Meta:
-#         model = Configuration
-#         fields = ['name']
 
 
 class NewConfigView(CreateView):
@@ -189,6 +188,10 @@ class ParamListView(FormView):
     def get_success_url(self):
         return self._success_url
 
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['request'] = self.request
+
     def get_form(self):
         form = super().get_form()
         self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
@@ -196,17 +199,35 @@ class ParamListView(FormView):
         for param in params:
             field_class = form.type_map[param.type]
             form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+
+        form.fields['input_file'] = forms.FileField(label="", required=False)
+        # form.fields['input_file'].required = False
         return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+        # context['tag_form'] = TagExperimentForm()
         return context
 
+    @transaction.atomic
     def form_valid(self, form):
         for key, value in form.cleaned_data.items():
-            param_id = int(key.replace('params', ''))
-            param = Parameter.objects.get(id=param_id)
-            param.value = value
-            param.save()
+            if 'params' in key:
+                param_id = int(key.replace('params', ''))
+                param = Parameter.objects.get(id=param_id)
+                param.value = value
+                param.save()
+        if 'tag_file' in self.request.POST:
+
+            print('xxxxxxxxxxxxxxx')
+            print('*'*80)
+            print(self.request.POST['tag_file'])
+            print('*'*80)
+
+
+        pprint(self.request.POST)
+        print('-------------')
+        pprint(form.cleaned_data)
+
         return super().form_valid(form)
