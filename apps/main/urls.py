@@ -11,7 +11,7 @@ from apps.main.views import (
     CloneConfigView,
     ParamListView,
     NewConfigView,
-    NewParamView, ChangeParamView, DeleteParamView)
+    NewParamView, ChangeParamView, DeleteParamView, FilePickerView)
 from apps.main import views
 
 
@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^change_param/params(?P<param_id>\d+)/?$', ChangeParamView.as_view()),
     url(r'^delete_param/(?P<param_id>\d+)/?$', DeleteParamView.as_view()),
     url(r'^delete_config/(?P<pk>\d+)/?$', DeleteConfigView.as_view()),
+    url(r'^file_picker$', FilePickerView.as_view()),
     # url(r'^experiment/(?P<experiment_id>\d+)/(?P<configuration_id>\d+)/?$', ExperimentView.as_view()),
     # url(r'parameters/(?P<configuration_id>\d+)*$', views.ParamList.as_view()),
     # #url(r'parameters', views.ParamList.as_view()),

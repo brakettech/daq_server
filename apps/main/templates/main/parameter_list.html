@@ -12,7 +12,7 @@
 
 {% block content %}
   <form action="" style="display: flex; flex-direction: row; flex-grow: 1" method="post"> {% csrf_token %}
-  <div style="height: 700px; display: flex; flex-direction: row; flex-grow: 1">
+  <div style="height: 85vh; display: flex; flex-direction: row; flex-grow: 1">
 
     <div class="panel" style="flex-grow: 1">
       <div class="card" style="display: flex; flex-direction: column; flex-grow: 1; overflow-x: scroll">
@@ -37,30 +37,34 @@
 
     </div>
     <div style="display: flex; flex-direction: column;">
-      <div class="card" style="height: 50px;">
-
-        <div style="display: flex; flex-direction: column">
-          <input type="file" name="input_file"/>
-          <input type="submit" name="tag_file" style="margin: 5px;">
-        </div>
-
+      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div>CSV: /a/really/long/path/to/the/place/i/want/and/make/it/even/really/longer</div>
+        <div>NCDF: /a/really/long/path/to/the/place/i/want/and/make/it/even/really/longer</div>
       </div>
-      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1" >
-        <span style="text-align: center">Tagged Files</span>
-        <span >Path: /Users/rob/Google Drive/071717</span>
+      <div class="card" style="flex-grow: 6; display: flex; flex-direction: column">
+        <span style="text-align: center">Input Files</span>
+
+
         <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
-
-
-
           <div>
             <a class="highlightable" href="">aaaaaaaaaaaaassssssssssssaaaaaaaaaaaaaaaaa</a>
           </div>
           <div>
             <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
           </div>
+        </div>
 
 
-
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; flex-grow: 6" >
+        <span style="text-align: center">Tagged Files</span>
+        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaassssssssssssaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
         </div>
 
 

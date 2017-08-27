@@ -3,7 +3,7 @@ from pprint import pprint
 from django.db import transaction
 from django.db.models.functions import Lower
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from apps.main.models import Parameter, CHAR_LENGTH
 from apps.main.models import Experiment, Configuration
 
@@ -234,3 +234,32 @@ class ParamListView(FormView):
         pprint(form.cleaned_data)
 
         return super().form_valid(form)
+
+
+class FilePickerView(TemplateView):
+    template_name = '{}/file_picker.html'.format(APP_NAME)
+
+    IM WORKING ON A FILE_PICKER VIEW.  IT WILL SIMPLY TAKE A PATHLIB .AS_URI()
+    STRING AS AN ARGUMENT AND RENDER LINKS TO OTHER PATHS
+    MAYBE I SHOULD PUT THE URI AS AN HTML QUERY PARAMETER
+
+
+    Here is some code I was playing with in ipython notebook
+
+    import pathlib
+    import os
+    import urllib
+
+    p0 = pathlib.Path('/Users/rob/Google Drive/')
+
+    file_list, path_list = [], []
+    for f in p.iterdir():
+        if f.name.startswith('.'):
+            continue
+
+        if f.is_dir():
+            path_list.append(f)
+        else:
+            file_list.append(f)
+
+    p0.as_uri()
