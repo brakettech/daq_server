@@ -11,8 +11,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="panel" style="flex-grow: 2">
-      <div class="card" style="height: 80vh; display: flex; flex-direction: column; overflow-x: scroll">
+  <div style="height: 700px; display: flex; flex-direction: row; flex-grow: 1">
+
+    <div class="panel" style="flex-grow: 1">
+      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1; overflow-x: scroll">
         <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
         <span style="text-align: center">Configuration: {{ config.name }}</span>
         <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
@@ -28,9 +30,176 @@
         </form>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="height: 30px;">
         <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
       </div>
+
     </div>
-    <div class="card" style="flex-grow: 1"></div>
+    <div style="display: flex; flex-direction: column;">
+      <div class="card" style="height: 50px;">
+        <form action="" method="post" >{% csrf_token %}
+          <div style="display: flex; flex-direction: column">
+            <input type="file" name="fileToUpload">
+            <input type="submit" value="Tag File" name="submit" style="margin: 5px;">
+          </div>
+        </form>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1" >
+        <span style="text-align: center">Tagged Files</span>
+        <span >Path: /Users/rob/Google Drive/071717</span>
+        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
+
+
+
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaassssssssssssaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+          <div>
+            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+          </div>
+
+
+
+        </div>
+
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+{#    </div>#}
 {% endblock %}

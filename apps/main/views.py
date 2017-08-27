@@ -76,7 +76,8 @@ class NewExperimentView(CreateView):
 
 class CloneExperimentView(FormView):
     template_name = '{}/experiment_update_form.html'.format(APP_NAME)
-    form_class = NewExperimentForm
+    form = NewExperimentForm
+    form_class = form
 
     def form_valid(self, form):
         experiment = Experiment.objects.get(id=int(self.kwargs['experiment_id']))
@@ -85,6 +86,7 @@ class CloneExperimentView(FormView):
 
     def get_success_url(self):
         return r'/main/experiment'
+
 
 class CloneConfigForm(forms.ModelForm):
     class Meta:
