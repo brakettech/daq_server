@@ -37,26 +37,44 @@
 
     </div>
     <div style="display: flex; flex-direction: column;">
-      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1;">
-        <div>CSV: /a/really/long/path/to/the/place/i/want/and/make/it/even/really/longer</div>
-        <div>NCDF: /a/really/long/path/to/the/place/i/want/and/make/it/even/really/longer</div>
-      </div>
-      <div class="card" style="flex-grow: 6; display: flex; flex-direction: column">
-        <span style="text-align: center">Input Files</span>
-
-
-        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
-          <div>
-            <a class="highlightable" href="">aaaaaaaaaaaaassssssssssssaaaaaaaaaaaaaaaaa</a>
+      <div class="card" style="flex-grow: 1; display: flex; flex-direction: column">
+        <span style="text-align: center">{{ current_path.as_posix }}</span>
+        <div class="pill_container">
+          <div class="pill">
+            <a href="">Home</a>
           </div>
-          <div>
-            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
-          </div>
+            {% for parent in parents %}
+              <div class="pill">{{ parent.name }}</div>
+
+            {% endfor %}
+
         </div>
 
 
+        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
+          <a class="highlightable" href="/main/config/{{ config.id }}">
+            <span class="breathwide">&#127968;</span>
+          </a>
+          {% if show_parent %}
+            <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ current_path.parent.as_uri }}">
+              <span class="breathwide">&#128194; </span>..
+            </a>
+          {% endif %}
+          {% for entry in entries %}
+            <div class="highlightable">
+              {% if entry.is_dir %}
+                <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ entry.as_uri }}">
+                  <span class="breathwide">&#128194;</span>{{ entry.name }}
+                </a>
+              {% elif entry.suffix == '.csv' %}
+                <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ entry.as_uri }}">{{ entry.name }}</a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
       </div>
-      <div class="card" style="display: flex; flex-direction: column; flex-grow: 6" >
+
+      <div class="card" style="display: flex; flex-direction: column; flex-grow: 1" >
         <span style="text-align: center">Tagged Files</span>
         <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
           <div>
@@ -66,9 +84,6 @@
             <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
           </div>
         </div>
-
-
-
       </div>
 
     </div>

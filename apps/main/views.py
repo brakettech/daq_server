@@ -1,16 +1,47 @@
+import os
 from pprint import pprint
-
-from django.db import transaction
-from django.db.models.functions import Lower
-
-from django.views.generic import ListView, DetailView, TemplateView
-from apps.main.models import Parameter, CHAR_LENGTH
-from apps.main.models import Experiment, Configuration
+import pathlib
 
 from django import forms
+from django.db import transaction
+from django.db.models.functions import Lower
 from django.views.generic import FormView, DeleteView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, TemplateView
+
+from apps.main.models import Experiment, Configuration
+from apps.main.models import Parameter, CHAR_LENGTH
+
 
 APP_NAME= 'main'
+DEFAULT_PATH = '/daqroot'
+
+
+def path_getter(uri=DEFAULT_PATH):
+    if uri is None:
+        uri = DEFAULT_PATH
+    print()
+    path = pathlib.Path(uri.replace('file:', ''))
+    print(f'uri for {uri}')
+    print(f'getting path for {path}')
+    if not path.exists():
+        print('does not exist')
+        path = pathlib.Path(DEFAULT_PATH)
+    show_parent =  path.as_posix() != DEFAULT_PATH
+    parents = []
+    p = path
+    while p.as_posix() != DEFAULT_PATH:
+        p = p.parent
+        parents.append(p)
+    parents = parents[::-1]
+
+
+
+
+
+    print('show_parent', show_parent)
+    entries = [p for p in path.iterdir() if not p.name.startswith('.')]
+    print(entries)
+    return show_parent, parents, path, entries
 
 class NewExperimentForm(forms.ModelForm):
     class Meta:
@@ -208,9 +239,16 @@ class ParamListView(FormView):
         return form
 
     def get_context_data(self, **kwargs):
+        path_uri = self.request.GET.get('path_uri')
+        show_parent, parents, path, entries = path_getter(path_uri)
+
         context = super().get_context_data(**kwargs)
         context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
-        # context['tag_form'] = TagExperimentForm()
+        context['current_path'] = path
+        context['show_parent'] = show_parent
+        context['entries'] = entries
+        context['parents'] = parents
+
         return context
 
     @transaction.atomic
@@ -239,27 +277,27 @@ class ParamListView(FormView):
 class FilePickerView(TemplateView):
     template_name = '{}/file_picker.html'.format(APP_NAME)
 
-    IM WORKING ON A FILE_PICKER VIEW.  IT WILL SIMPLY TAKE A PATHLIB .AS_URI()
-    STRING AS AN ARGUMENT AND RENDER LINKS TO OTHER PATHS
-    MAYBE I SHOULD PUT THE URI AS AN HTML QUERY PARAMETER
-
-
-    Here is some code I was playing with in ipython notebook
-
-    import pathlib
-    import os
-    import urllib
-
-    p0 = pathlib.Path('/Users/rob/Google Drive/')
-
-    file_list, path_list = [], []
-    for f in p.iterdir():
-        if f.name.startswith('.'):
-            continue
-
-        if f.is_dir():
-            path_list.append(f)
-        else:
-            file_list.append(f)
-
-    p0.as_uri()
+    # # IM WORKING ON A FILE_PICKER VIEW.  IT WILL SIMPLY TAKE A PATHLIB .AS_URI()
+    # # STRING AS AN ARGUMENT AND RENDER LINKS TO OTHER PATHS
+    # # MAYBE I SHOULD PUT THE URI AS AN HTML QUERY PARAMETER
+    #
+    #
+    # # Here is some code I was playing with in ipython notebook
+    # #
+    # import pathlib
+    # import os
+    # import urllib
+    #
+    # p0 = pathlib.Path('/Users/rob/Google Drive/')
+    #
+    # file_list, path_list = [], []
+    # for f in p.iterdir():
+    #     if f.name.startswith('.'):
+    #         continue
+    #
+    #     if f.is_dir():
+    #         path_list.append(f)
+    #     else:
+    #         file_list.append(f)
+    #
+    # p0.as_uri()
