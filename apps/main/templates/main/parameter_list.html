@@ -36,30 +36,22 @@
       </div>
 
     </div>
-    <div style="display: flex; flex-direction: column;">
-      <div class="card" style="flex-grow: 1; display: flex; flex-direction: column">
-        <span style="text-align: center">{{ current_path.as_posix }}</span>
-        <div class="pill_container">
-          <div class="pill">
-            <a href="">Home</a>
-          </div>
-            {% for parent in parents %}
-              <div class="pill">{{ parent.name }}</div>
+    <div style="display: flex; flex-direction: column; ">
+      <div class="card" style="flex-grow: 1; flex-basis: 1px; display: flex; flex-direction: column">
+      <input type="hidden" name="current_path" value="{{ current_path.as_posix }}"/>
 
-            {% endfor %}
+        <div class="pill_container" style="max-width: 400px; margin-bottom: 10px; max-height: 100px; overflow-y: scroll;">
+          <div class="pill"> <a href="/main/config/{{ config.id }}">Home</a> </div>
+          {% for parent in parents %}
+            <div class="pill">
+              <a href="/main/config/{{ config.id }}?path_uri={{ parent.as_uri }}">{{ parent.name }}</a>
+            </div>
+          {% endfor %}
 
         </div>
 
 
-        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
-          <a class="highlightable" href="/main/config/{{ config.id }}">
-            <span class="breathwide">&#127968;</span>
-          </a>
-          {% if show_parent %}
-            <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ current_path.parent.as_uri }}">
-              <span class="breathwide">&#128194; </span>..
-            </a>
-          {% endif %}
+        <div style="display: flex; flex-direction: column; flex-grow: 1; flex-basis: 1px; overflow-y: scroll">
           {% for entry in entries %}
             <div class="highlightable">
               {% if entry.is_dir %}
@@ -67,7 +59,8 @@
                   <span class="breathwide">&#128194;</span>{{ entry.name }}
                 </a>
               {% elif entry.suffix == '.csv' %}
-                <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ entry.as_uri }}">{{ entry.name }}</a>
+{#                <a class="highlightable" href="/main/config/{{ config.id }}?path_uri={{ entry.as_uri }}">{{ entry.name }}</a>#}
+                <input type="submit" class="link_submitter" name="selected_file" value="{{ entry.name }}"/>
               {% endif %}
             </div>
           {% endfor %}

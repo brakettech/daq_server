@@ -19,29 +19,26 @@ DEFAULT_PATH = '/daqroot'
 def path_getter(uri=DEFAULT_PATH):
     if uri is None:
         uri = DEFAULT_PATH
-    print()
     path = pathlib.Path(uri.replace('file:', ''))
-    print(f'uri for {uri}')
-    print(f'getting path for {path}')
     if not path.exists():
-        print('does not exist')
         path = pathlib.Path(DEFAULT_PATH)
-    show_parent =  path.as_posix() != DEFAULT_PATH
-    parents = []
+    # show_parent =  path.as_posix() != DEFAULT_PATH
     p = path
+    parents = []
+    if p.is_dir():
+        parents.append(p)
     while p.as_posix() != DEFAULT_PATH:
         p = p.parent
         parents.append(p)
     parents = parents[::-1]
+    if parents:
+        parents = parents[1:]
 
-
-
-
-
-    print('show_parent', show_parent)
-    entries = [p for p in path.iterdir() if not p.name.startswith('.')]
-    print(entries)
-    return show_parent, parents, path, entries
+    if path.is_dir():
+        entries = [p for p in path.iterdir() if not p.name.startswith('.')]
+    else:
+        entries = []
+    return parents, path, entries
 
 class NewExperimentForm(forms.ModelForm):
     class Meta:
@@ -204,6 +201,35 @@ class NewParamView(CreateView):
     def get_success_url(self):
         return '/main/config/{}'.format(self.kwargs['config_id'])
 
+class TagForm(forms.Form):
+    pass
+
+
+class TagFileView(FormView):
+    template_name = '{}/tag_file.html'.format(APP_NAME)
+    form_class = TagForm
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._success_url = ''
+
+    def get_success_url(self):
+        return self._success_url
+
+    def get_form(self):
+        form = super().get_form()
+        form.request = self.request
+        form.view = self
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        path_uri = self.request.GET.get('path_uri')
+        parents, path, entries = path_getter(path_uri)
+        context['csv_file'] = path
+        context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
+        context['config_id'] = self.kwargs['config_id']
+        context['params'] = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id']))
+        return context
+
 class ParamForm(forms.Form):
     type_map = {
         'str': forms.CharField,
@@ -211,6 +237,12 @@ class ParamForm(forms.Form):
         'float': forms.FloatField,
     }
 
+    def clean(self):
+        clean_data = super().clean()
+        clean_data['selected_file'] = self.request.POST.get('selected_file')
+        clean_data['current_path'] = self.request.POST.get('current_path')
+        clean_data.update(self.view.kwargs)
+        return clean_data
 
 class ParamListView(FormView):
     template_name = '{}/parameter_list.html'.format(APP_NAME)
@@ -228,54 +260,75 @@ class ParamListView(FormView):
 
     def get_form(self):
         form = super().get_form()
+        form.request = self.request
+        form.view = self
         self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
         params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
         for param in params:
             field_class = form.type_map[param.type]
             form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
 
-        form.fields['input_file'] = forms.FileField(label="", required=False)
+        # form.fields['input_file'] = forms.FileField(label="", required=False)
         # form.fields['input_file'].required = False
         return form
 
     def get_context_data(self, **kwargs):
         path_uri = self.request.GET.get('path_uri')
-        show_parent, parents, path, entries = path_getter(path_uri)
+        parents, path, entries = path_getter(path_uri)
 
         context = super().get_context_data(**kwargs)
         context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
         context['current_path'] = path
-        context['show_parent'] = show_parent
         context['entries'] = entries
         context['parents'] = parents
 
         return context
 
-    @transaction.atomic
-    def form_valid(self, form):
-        for key, value in form.cleaned_data.items():
+    def save_params_values(self, cleaned_data):
+        for key, value in cleaned_data.items():
             if 'params' in key:
                 param_id = int(key.replace('params', ''))
                 param = Parameter.objects.get(id=param_id)
                 param.value = value
                 param.save()
-        if 'tag_file' in self.request.POST:
 
-            print('xxxxxxxxxxxxxxx')
-            print('*'*80)
-            print(self.request.POST['tag_file'])
-            print('*'*80)
+    def tag_file_if_needed(self, cleaned_data):
+        path, file_name = cleaned_data['current_path'], cleaned_data['selected_file']
+        if path and file_name:
+            path = pathlib.Path(os.path.join(cleaned_data['current_path'], cleaned_data['selected_file']))
+            self._success_url = '/main/tag_file/{}/?path_uri={}'.format(
+                cleaned_data['config_id'],
+                path.as_uri(),
+            )
 
-
-        pprint(self.request.POST)
-        print('-------------')
+    @transaction.atomic
+    def form_valid(self, form):
+        self.save_params_values(form.cleaned_data)
+        print()
         pprint(form.cleaned_data)
 
+        self.tag_file_if_needed(form.cleaned_data)
         return super().form_valid(form)
+    # def save_params_values(self, cleaned_data):
+    #
+    # @transaction.atomic
+    # def form_valid(self, form):
+    #
+    #     for key, value in form.cleaned_data.items():
+    #         if 'params' in key:
+    #             param_id = int(key.replace('params', ''))
+    #             param = Parameter.objects.get(id=param_id)
+    #             param.value = value
+    #             param.save()
+    #
+    #     return super().form_valid(form)
+
+    # def render_to_response(self, context, **response_kwargs):
+    #     return super().render_to_response(context, **response_kwargs)
 
 
 class FilePickerView(TemplateView):
-    template_name = '{}/file_picker.html'.format(APP_NAME)
+    template_name = '{}/tag_file.html'.format(APP_NAME)
 
     # # IM WORKING ON A FILE_PICKER VIEW.  IT WILL SIMPLY TAKE A PATHLIB .AS_URI()
     # # STRING AS AN ARGUMENT AND RENDER LINKS TO OTHER PATHS

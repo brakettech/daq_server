@@ -10,6 +10,7 @@ from apps.main.views import (
     CloneExperimentView,
     CloneConfigView,
     ParamListView,
+    TagFileView,
     NewConfigView,
     NewParamView, ChangeParamView, DeleteParamView, FilePickerView)
 from apps.main import views
@@ -22,6 +23,7 @@ urlpatterns = [
     url(r'^delete_experiment/(?P<pk>\d+)/?$', DeleteExperimentView.as_view()),
 
     url(r'^config/(?P<config_id>\d+)/?$', ParamListView.as_view(), name='config'),
+    url(r'^tag_file/(?P<config_id>\d+)/?$', TagFileView.as_view(), name='config'),
 
     url(r'^clone_experiment/(?P<experiment_id>\d+)/?$', CloneExperimentView.as_view()),
     url(r'^clone_config/(?P<config_id>\d+)/?$', CloneConfigView.as_view()),

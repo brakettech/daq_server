@@ -1,0 +1,41 @@
+{%  extends "main_base.html" %}
+
+{% block nav %}
+  <div style="font-size: 1.2em; text-align: center; width: 100%;">{{ csv_file }} &#10144; {{ netcdf_file.name }}</div>
+{% endblock %}
+
+{% block content %}
+  <div style="display: flex; flex-grow: 1; flex-direction: column" class="card">
+    <h2 style="text-align: center">Parameters To Save</h2>
+    <div style="display: flex; flex-grow: 1; flex-direction: row">
+      <div style="flex-grow: 1"></div>
+      <div style="flex-grow: 1">
+        <div> key = value </div>
+        <div> key = value </div>
+        <div> key = value </div>
+        <div> key = value </div>
+      </div>
+      <div style="flex-grow: 1"></div>
+    </div>
+
+{#    <div style="display: flex; flex-direction: row; justify-content: flex-start">#}
+{#      <div>key</div>#}
+{#      <div>value</div>#}
+{#    </div>#}
+{#      <div style="display: flex; flex-grow: 1"></div>#}
+{#      <div style="display: flex; flex-grow: 1; flex-direction: column">#}
+{#        hello#}
+{#      </div>#}
+{#      <div style="display: flex; flex-grow: 1"></div>#}
+
+  </div>
+{##}
+{#  <div style="display: flex; flex-grow: 1"></div>#}
+{% endblock %}
+
+
+
+{#{% for param in params %}#}
+{#  <div>{{ param.name }} {{ param.value }}</div>#}
+{#{% endfor %}#}
+
