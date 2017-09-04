@@ -1,0 +1,27 @@
+{%  extends "main_base.html" %}
+
+{% block nav %}
+{#  <div style="display: flex; flex-direction: row;">#}
+  <form action="" method="post" style="width: 100%">
+    {%  csrf_token %}
+    <div style="display: flex; flex-direction: row; flex-grow: 1; margin-top: 50px; margin-bottom: 50px;">
+      <div style="display: flex; flex-grow: 1"></div>
+      <div style="display: flex; flex-direction: column;">
+        {%  if action_taken == 'saved' %}
+          <h1>NetCDF Created</h1>
+        {% else %}
+          <h1>Nothing Done</h1>
+        {% endif %}
+          <button type="submit" name="ok">Got It.</button>
+      </div>
+      <div style="display: flex; flex-grow: 1"></div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+
+
+

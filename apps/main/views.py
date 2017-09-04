@@ -201,8 +201,54 @@ class NewParamView(CreateView):
     def get_success_url(self):
         return '/main/config/{}'.format(self.kwargs['config_id'])
 
+class ResultForm(forms.Form):
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data.update(self.view.request.POST)
+        cleaned_data.update(self.view.kwargs)
+        return cleaned_data
+
+class TagResultView(FormView):
+    template_name = '{}/tag_result.html'.format(APP_NAME)
+    form_class = ResultForm
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._success_url = ''
+
+    def get_form(self):
+        form = super().get_form()
+        form.view = self
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context.update(self.kwargs)
+        return context
+
+    def get_success_url(self):
+        # return self._success_url
+        return '/main/config/{}'.format(self.kwargs['config_id'])
+        # config_id = self.kwargs['config_id']
+        # return f'/main/config/{config_id}'
+
+    # def form_valid(self, form):
+    #     cleaned_data = form.cleaned_data
+    #     self._success_url='/'
+    #     self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
+    #     print()
+    #     print('s'*80)
+    #     print(cleaned_data)
+    #     print('s'*80)
+    #
+    #     return super().form_valid()
+
 class TagForm(forms.Form):
-    pass
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        cleaned_data.update(dict(self.request.POST))
+        return cleaned_data
+
 
 
 class TagFileView(FormView):
@@ -219,6 +265,7 @@ class TagFileView(FormView):
         form = super().get_form()
         form.request = self.request
         form.view = self
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -226,9 +273,28 @@ class TagFileView(FormView):
         parents, path, entries = path_getter(path_uri)
         context['csv_file'] = path
         context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
+        # context['netcdf_file'] = path.parent.joinpath(path.name)
         context['config_id'] = self.kwargs['config_id']
-        context['params'] = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id']))
+        config_id =int(self.kwargs['config_id'])
+        context['params'] = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
+        print('d'*80)
+        print(context['params'])
+        print('d'*80)
+        context['notes'] = Configuration.objects.get(id=config_id).notes
         return context
+
+    def form_valid(self, form):
+        if 'create' in form.cleaned_data:
+            self._success_url = '/main/tag_result/{}/saved'.format(
+                form.cleaned_data['config_id'][0])
+        else:
+            self._success_url = '/main/tag_result/{}/canceled'.format(
+                form.cleaned_data['config_id'][0])
+
+        print('*'*80)
+        print(form.cleaned_data)
+        print('*'*80)
+        return super().form_valid(form)
 
 class ParamForm(forms.Form):
     type_map = {

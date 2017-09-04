@@ -5,37 +5,33 @@
 {% endblock %}
 
 {% block content %}
-  <div style="display: flex; flex-grow: 1; flex-direction: column" class="card">
-    <h2 style="text-align: center">Parameters To Save</h2>
-    <div style="display: flex; flex-grow: 1; flex-direction: row">
-      <div style="flex-grow: 1"></div>
-      <div style="flex-grow: 1">
-        <div> key = value </div>
-        <div> key = value </div>
-        <div> key = value </div>
-        <div> key = value </div>
+  <form action="" method="post" style="display: flex; flex-grow: 1; flex-direction: row; justify-content: space-around">
+    {% csrf_token %}
+    <div style="display: flex; flex-grow: 1; flex-direction: column">
+
+      <div style="display: flex; flex-grow: 1; flex-direction: column; padding-left: 20px; padding-right: 20px;" class="card">
+        <h2 style="text-align: center">Parameters To Save</h2>
+        <div style="display: flex; flex-grow: 1; flex-direction: row">
+          <div style="flex-grow: 1; height: 30vh; display: flex; flex-direction: column; flex-wrap: wrap; overflow-x: scroll">
+            {% for param in params %}
+              <div class="keyval">{{ param.name }} = {{ param.value }}</div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-      <div style="flex-grow: 1"></div>
+      <div style="display: flex; height: 40vh; flex-grow: 1; flex-direction: column; padding-left: 20px; padding-right: 20px;" class="card">
+        <h2 style="text-align: center">Notes</h2>
+        <textarea readonly style="flex-grow: 1; font-size: inherit">{{ notes }}</textarea>
+        <div style="display: flex; flex-direction: row;">
+          <input type="hidden" name="config_id" value="{{ config_id }}"/>
+          <button type="submit" style="width: 100px; height: 40px; margin: 5px;" name="create">Create NetCDF</button>
+          <button type="submit" style="width: 50px; height: 40px; margin: 5px;" name="cancel">Cancel</button>
+        </div>
+      </div>
     </div>
-
-{#    <div style="display: flex; flex-direction: row; justify-content: flex-start">#}
-{#      <div>key</div>#}
-{#      <div>value</div>#}
-{#    </div>#}
-{#      <div style="display: flex; flex-grow: 1"></div>#}
-{#      <div style="display: flex; flex-grow: 1; flex-direction: column">#}
-{#        hello#}
-{#      </div>#}
-{#      <div style="display: flex; flex-grow: 1"></div>#}
-
-  </div>
-{##}
-{#  <div style="display: flex; flex-grow: 1"></div>#}
+  </form>
 {% endblock %}
 
 
 
-{#{% for param in params %}#}
-{#  <div>{{ param.name }} {{ param.value }}</div>#}
-{#{% endfor %}#}
 
