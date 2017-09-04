@@ -332,7 +332,6 @@ class ParamListView(FormView):
         form.view.populate_params(config)
         self._success_url = '/main/config/{}'.format(config.id)
 
-        # params = Parameter.objects.filter(configuration=config).order_by(Lower('name'))
         for param in self.params:
             field_class = form.type_map[param.type]
             form.fields[param.name] = field_class(
