@@ -273,7 +273,6 @@ class TagFileView(FormView):
         parents, path, entries = path_getter(path_uri)
         context['csv_file'] = path
         context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
-        # context['netcdf_file'] = path.parent.joinpath(path.name)
         context['config_id'] = self.kwargs['config_id']
         config_id =int(self.kwargs['config_id'])
         context['params'] = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
@@ -332,7 +331,11 @@ class ParamListView(FormView):
         params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
         for param in params:
             field_class = form.type_map[param.type]
-            form.fields['params{}'.format(param.id)] = field_class(initial=param.value, label=param.name)
+            form.fields['params{}'.format(param.id)] = field_class(
+                initial=param.value, label=param.name, required=False)
+            config = Configuration.objects.get(id=int(self.kwargs['config_id']))
+            form.fields['notes'] = forms.CharField(
+                initial=config.notes, required=False, widget=forms.Textarea(attrs={'style': 'height: 100%; width: 100%;'}))
 
         # form.fields['input_file'] = forms.FileField(label="", required=False)
         # form.fields['input_file'].required = False
@@ -341,20 +344,27 @@ class ParamListView(FormView):
     def get_context_data(self, **kwargs):
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
+        #TODO: actually make this look for netcdf
+        netcdf_entries = [e for e in entries if e.suffix == '.csv']
 
         context = super().get_context_data(**kwargs)
         context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
         context['current_path'] = path
         context['entries'] = entries
+        context['netcdf_files'] = netcdf_entries
         context['parents'] = parents
 
         return context
 
     def save_params_values(self, cleaned_data):
+        # loop over all cleaned data items
         for key, value in cleaned_data.items():
+            # if this is a parameter
             if 'params' in key:
+                # get the parameter object
                 param_id = int(key.replace('params', ''))
                 param = Parameter.objects.get(id=param_id)
+                # save the new parameter value
                 param.value = value
                 param.save()
 

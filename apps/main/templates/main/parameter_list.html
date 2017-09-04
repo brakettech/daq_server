@@ -16,9 +16,11 @@
 
     <div class="panel" style="flex-grow: 1">
       <div class="card" style="display: flex; flex-direction: column; flex-grow: 1; overflow-x: scroll">
-        <span style="text-align: center">Experiment: {{ config.experiment.name }}</span>
-        <span style="text-align: center">Configuration: {{ config.name }}</span>
         <div style="display: flex; flex-direction: column; flex-wrap: wrap; flex-grow: 1">
+          <div style="display: flex; flex-direction: row; margin-bottom: 10px;">
+            <div class="pill" style="width: 150px; margin-right: 5px;"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
+            <button type="submit" name="save_params">Save</button>
+          </div>
           {{ form.errors }}
           {{ form.non_field_errors }}
           {% for field in form%}
@@ -28,13 +30,14 @@
               </div>
             {%  endif %}
           {% endfor %}
-        <button type="submit" name="save_params">Save</button>
         </div>
       </div>
-      <div class="card" style="height: 30px;">
-        <div class="highlightable"><a href="/main/new_param/{{ config.id }}">Create New Parameter</a></div>
-      </div>
 
+      <div class="card" style="display: flex; flex-direction: column; height: 150px">
+        <div>Notes</div>
+{#        <div style="height: 100%">{{ form.notes }}</div>#}
+        {{ form.notes }}
+      </div>
     </div>
     <div style="display: flex; flex-direction: column; ">
       <div class="card" style="flex-grow: 1; flex-basis: 1px; display: flex; flex-direction: column">
@@ -51,7 +54,7 @@
         </div>
 
 
-        <div style="display: flex; flex-direction: column; flex-grow: 1; flex-basis: 1px; overflow-y: scroll">
+        <div style="min-width: 200px; display: flex; flex-direction: column; flex-grow: 1; flex-basis: 1px; overflow-y: scroll">
           {% for entry in entries %}
             <div class="highlightable">
               {% if entry.is_dir %}
@@ -70,12 +73,9 @@
       <div class="card" style="display: flex; flex-direction: column; flex-grow: 1" >
         <span style="text-align: center">Tagged Files</span>
         <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
-          <div>
-            <a class="highlightable" href="">aaaaaaaaaaaaassssssssssssaaaaaaaaaaaaaaaaa</a>
-          </div>
-          <div>
-            <a class="highlightable" href="">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
-          </div>
+          {% for file in netcdf_files %}
+            <div><a class="highlightable" href="">{{ file.name }}</a> </div>
+          {% endfor %}
         </div>
       </div>
 
