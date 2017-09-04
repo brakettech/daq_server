@@ -23,8 +23,8 @@
           </div>
           {{ form.errors }}
           {{ form.non_field_errors }}
-          {% for field in form%}
-            {% if 'params' in field.name %}
+          {% for field in form %}
+            {% if field.name in param_names %}
               <div>
                 <a class="highlightable" href="/main/change_param/{{ field.name }}">{{ field.label }}</a> {{ field }}
               </div>

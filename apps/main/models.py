@@ -63,7 +63,7 @@ class Configuration(models.Model):
 class Parameter(models.Model):
     configuration = models.ForeignKey('main.Configuration')
     name = models.CharField(max_length=CHAR_LENGTH)
-    value = models.CharField(max_length=CHAR_LENGTH, blank=True)
+    value = models.CharField(max_length=CHAR_LENGTH, null=True)
     type = models.CharField(max_length=CHAR_LENGTH, choices=TYPE_CHOICES)
 
     def clone(self, config_id):

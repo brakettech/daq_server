@@ -327,43 +327,58 @@ class ParamListView(FormView):
         form = super().get_form()
         form.request = self.request
         form.view = self
-        self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
-        params = Parameter.objects.filter(configuration_id=int(self.kwargs['config_id'])).order_by(Lower('name'))
-        for param in params:
-            field_class = form.type_map[param.type]
-            form.fields['params{}'.format(param.id)] = field_class(
-                initial=param.value, label=param.name, required=False)
-            config = Configuration.objects.get(id=int(self.kwargs['config_id']))
-            form.fields['notes'] = forms.CharField(
-                initial=config.notes, required=False, widget=forms.Textarea(attrs={'style': 'height: 100%; width: 100%;'}))
 
-        # form.fields['input_file'] = forms.FileField(label="", required=False)
-        # form.fields['input_file'].required = False
+        config = Configuration.objects.get(id=int(self.kwargs['config_id']))
+        form.view.populate_params(config)
+        self._success_url = '/main/config/{}'.format(config.id)
+
+        # params = Parameter.objects.filter(configuration=config).order_by(Lower('name'))
+        for param in self.params:
+            field_class = form.type_map[param.type]
+            form.fields[param.name] = field_class(
+                initial=param.value, label='({}) {}'.format(param.type.lower()[0], param.name), required=False)
+            # form.fields[param.name].is_param = True
+        form.fields['notes'] = forms.CharField(
+            initial=config.notes, required=False, widget=forms.Textarea(attrs={'style': 'height: 100%; width: 100%;'}))
+
         return form
 
+    def populate_params(self, config):
+        if not hasattr(self, 'params'):
+            self.params = Parameter.objects.filter(configuration=config).order_by(Lower('name'))
+
+    def populate_config(self):
+        if not hasattr(self, 'config'):
+            self.config = Configuration.objects.get(id=int(self.kwargs['config_id']))
+
     def get_context_data(self, **kwargs):
+        self.populate_config()
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
         #TODO: actually make this look for netcdf
         netcdf_entries = [e for e in entries if e.suffix == '.csv']
+        self.populate_params(self.config)
 
         context = super().get_context_data(**kwargs)
-        context['config'] = Configuration.objects.get(id=int(self.kwargs['config_id']))
+        context['config'] = self.config
         context['current_path'] = path
         context['entries'] = entries
         context['netcdf_files'] = netcdf_entries
         context['parents'] = parents
+        context['param_names'] = [p.name for p in self.params]
 
         return context
 
-    def save_params_values(self, cleaned_data):
+    def save_params_values(self, form):
+        self.populate_config()
+        self.populate_params(self.config)
+        param_names = {p.name for p in self.params}
         # loop over all cleaned data items
-        for key, value in cleaned_data.items():
+        for key, value in form.cleaned_data.items():
             # if this is a parameter
-            if 'params' in key:
+            if key in param_names:
                 # get the parameter object
-                param_id = int(key.replace('params', ''))
-                param = Parameter.objects.get(id=param_id)
+                param = Parameter.objects.get(configuration=self.config, name=key)
                 # save the new parameter value
                 param.value = value
                 param.save()
@@ -379,7 +394,7 @@ class ParamListView(FormView):
 
     @transaction.atomic
     def form_valid(self, form):
-        self.save_params_values(form.cleaned_data)
+        self.save_params_values(form)
         print()
         pprint(form.cleaned_data)
 
