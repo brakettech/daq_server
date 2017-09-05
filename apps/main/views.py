@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models.functions import Lower
 from django.views.generic import FormView, DeleteView, CreateView, UpdateView
 from django.views.generic import ListView, DetailView, TemplateView
+from django.utils.text import slugify
 
 from apps.main.models import Experiment, Configuration
 from apps.main.models import Parameter, CHAR_LENGTH
@@ -14,6 +15,13 @@ from apps.main.models import Parameter, CHAR_LENGTH
 
 APP_NAME= 'main'
 DEFAULT_PATH = '/daqroot'
+
+CHANNEL_NAMES = [
+    'Channel A',
+    'Channel B',
+    'Channel C',
+    'Channel D',
+]
 
 
 def path_getter(uri=DEFAULT_PATH):
@@ -161,7 +169,9 @@ class ConfigListView(ListView):
         return self.get(*args, **kwargs)
 
 
+
 class ChangeParamView(UpdateView):
+    # form_class = ChangeParamForm
     model = Parameter
     fields = ['name', 'type']
     template_name = '{}/update_parameter_view.html'.format(APP_NAME)
@@ -183,9 +193,31 @@ class ChangeParamView(UpdateView):
         return super().form_valid(form)
 
 
+class NewParamForm(forms.ModelForm):
+    class Meta:
+        model = Parameter
+        fields = ['name', 'type', 'configuration']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['type'] == 'channel':
+            if cleaned_data['name'] not in CHANNEL_NAMES:
+                self.add_error(
+                    'name',
+                    'Allowed channel names: {}'.format(CHANNEL_NAMES)
+                )
+
+
+        print()
+        print('cleaned_data', cleaned_data)
+        print()
+
+        return cleaned_data
+
 class NewParamView(CreateView):
+    form_class = NewParamForm
     model = Parameter
-    fields = ['name', 'type', 'configuration']
+    # fields = ['name', 'type', 'configuration']
 
     def get_form(self):
         form = super().get_form()
@@ -300,10 +332,25 @@ class ParamForm(forms.Form):
         'str': forms.CharField,
         'int': forms.IntegerField,
         'float': forms.FloatField,
+        'channel': forms.CharField,
     }
 
     def clean(self):
         clean_data = super().clean()
+        error_dict = {}
+
+        for name, value in clean_data.items():
+            if name in CHANNEL_NAMES:
+                value_slug = slugify(value).replace('-', '_')
+                if value != value_slug:
+                    error_dict[name] = 'Channel names must be slugs. e.g. \'{}\''.format(value_slug)
+
+        for name, error in error_dict.items():
+            self.add_error(name, error)
+
+
+
+
         clean_data['selected_file'] = self.request.POST.get('selected_file')
         clean_data['current_path'] = self.request.POST.get('current_path')
         clean_data.update(self.view.kwargs)
@@ -344,7 +391,8 @@ class ParamListView(FormView):
 
     def populate_params(self, config):
         if not hasattr(self, 'params'):
-            self.params = Parameter.objects.filter(configuration=config).order_by(Lower('name'))
+            params = Parameter.objects.filter(configuration=config)
+            self.params = sorted(params, key=lambda p: (p.type != 'channel', p.name))
 
     def populate_config(self):
         if not hasattr(self, 'config'):

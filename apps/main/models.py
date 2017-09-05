@@ -7,6 +7,7 @@ TYPE_CHOICES = [
     ('str', 'String'),
     ('int', 'Integer'),
     ('float', 'Float'),
+    ('channel', 'Channel'),
 ]
 
 class Experiment(models.Model):

@@ -1,15 +1,13 @@
 {%  extends "main_base.html" %}
 
-{% block content %}
-  <div style="flex-grow: 1"></div>
-  <div class="panel" style="flex-grow: 15">
-    <div class="card">
-      <h2 style="text-align: center">Create New Parameter</h2>
-      <form action="/main/new_param/{{ config_id }}" method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create</button>
-      </form>
-    </div>
+{% block nav %}
+  <h2 style="width: 100%; text-align: center">Create New Parameter</h2>
+  <div class="panel" style="flex-grow: 1">
+    <form action="/main/new_param/{{ config_id }}" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Create</button>
+    </form>
   </div>
-  <div style="flex-grow: 1"></div>
+{% endblock %}
+{% block content %}
 {% endblock %}
