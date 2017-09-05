@@ -40,7 +40,7 @@
       </div>
     </div>
     <div style="display: flex; flex-direction: column; ">
-      <div class="card" style="flex-grow: 1; flex-basis: 1px; display: flex; flex-direction: column">
+      <div class="card" style="flex-grow: 1; flex-basis: ; display: flex; flex-direction: column">
       <input type="hidden" name="current_path" value="{{ current_path.as_posix }}"/>
 
         <div class="pill_container" style="max-width: 400px; margin-bottom: 10px; max-height: 100px; overflow-y: scroll;">
@@ -72,7 +72,7 @@
 
       <div class="card" style="display: flex; flex-direction: column; flex-grow: 1" >
         <span style="text-align: center">Tagged Files</span>
-        <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: scroll">
+        <div style="display: flex; flex-direction: column; flex-grow: 1; flex-basis: 1px; overflow-y: scroll">
           {% for file in netcdf_files %}
             <div><a class="highlightable" href="">{{ file.name }}</a> </div>
           {% endfor %}

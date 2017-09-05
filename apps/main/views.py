@@ -17,10 +17,10 @@ APP_NAME= 'main'
 DEFAULT_PATH = '/daqroot'
 
 CHANNEL_NAMES = [
-    'Channel A',
-    'Channel B',
-    'Channel C',
-    'Channel D',
+    'channel_a',
+    'channel_b',
+    'channel_c',
+    'channel_d',
 ]
 
 
@@ -206,6 +206,10 @@ class NewParamForm(forms.ModelForm):
                     'name',
                     'Allowed channel names: {}'.format(CHANNEL_NAMES)
                 )
+        else:
+            slug_name = slugify(cleaned_data['name']).replace('-', '_')
+            if cleaned_data['name'] != slug_name:
+                self.add_error('name', 'Name must be a slug like: \'{}\''.format(slug_name))
 
 
         print()
@@ -343,7 +347,7 @@ class ParamForm(forms.Form):
             if name in CHANNEL_NAMES:
                 value_slug = slugify(value).replace('-', '_')
                 if value != value_slug:
-                    error_dict[name] = 'Channel names must be slugs. e.g. \'{}\''.format(value_slug)
+                    error_dict[name] = 'Channel names must be slugs like: \'{}\''.format(value_slug)
 
         for name, error in error_dict.items():
             self.add_error(name, error)
