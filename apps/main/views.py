@@ -1,19 +1,18 @@
 import os
-from pprint import pprint
 import pathlib
 
 from django import forms
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.views.generic import FormView, DeleteView, CreateView, UpdateView
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView
 from django.utils.text import slugify
 
 from apps.main.models import Experiment, Configuration
-from apps.main.models import Parameter, CHAR_LENGTH
+from apps.main.models import Parameter
 
 
-APP_NAME= 'main'
+APP_NAME = 'main'
 DEFAULT_PATH = '/daqroot'
 
 CHANNEL_NAMES = [
@@ -30,7 +29,6 @@ def path_getter(uri=DEFAULT_PATH):
     path = pathlib.Path(uri.replace('file:', ''))
     if not path.exists():
         path = pathlib.Path(DEFAULT_PATH)
-    # show_parent =  path.as_posix() != DEFAULT_PATH
     p = path
     parents = []
     if p.is_dir():
@@ -43,16 +41,16 @@ def path_getter(uri=DEFAULT_PATH):
         parents = parents[1:]
 
     if path.is_dir():
-        entries = [p for p in path.iterdir() if not p.name.startswith('.')]
+        entries = [pth for pth in path.iterdir() if not pth.name.startswith('.')]
     else:
         entries = []
     return parents, path, entries
+
 
 class NewExperimentForm(forms.ModelForm):
     class Meta:
         model = Experiment
         fields = ['name']
-
 
 
 class NewConfigView(CreateView):
@@ -83,11 +81,13 @@ class DeleteExperimentView(DeleteView):
         context['configs'] = Configuration.objects.filter(experiment=context['experiment']).order_by(Lower('name'))
         return context
 
+
 class DeleteConfigView(DeleteView):
     model = Configuration
 
     def get_success_url(self):
         return r'/main/experiment/{}'.format(self.get_context_data()['configuration'].experiment_id)
+
 
 class DeleteParamView(DeleteView):
     model = Parameter
@@ -127,6 +127,7 @@ class CloneConfigForm(forms.ModelForm):
     class Meta:
         model = Configuration
         fields = ['name']
+
 
 class CloneConfigView(FormView):
     template_name = '{}/configuration_update_form.html'.format(APP_NAME)
@@ -169,7 +170,6 @@ class ConfigListView(ListView):
         return self.get(*args, **kwargs)
 
 
-
 class ChangeParamView(UpdateView):
     # form_class = ChangeParamForm
     model = Parameter
@@ -182,7 +182,6 @@ class ChangeParamView(UpdateView):
     def get_success_url(self):
         param = self.get_object()
         url = '/main/config/{}'.format(param.configuration_id)
-        print('>>>>>>>>> url {}'.format(url))
         return url
 
     def form_valid(self, form):
@@ -211,12 +210,8 @@ class NewParamForm(forms.ModelForm):
             if cleaned_data['name'] != slug_name:
                 self.add_error('name', 'Name must be a slug like: \'{}\''.format(slug_name))
 
-
-        print()
-        print('cleaned_data', cleaned_data)
-        print()
-
         return cleaned_data
+
 
 class NewParamView(CreateView):
     form_class = NewParamForm
@@ -237,6 +232,7 @@ class NewParamView(CreateView):
     def get_success_url(self):
         return '/main/config/{}'.format(self.kwargs['config_id'])
 
+
 class ResultForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
@@ -247,6 +243,7 @@ class ResultForm(forms.Form):
         path_uri = path.parent.as_uri()
         cleaned_data.update(path_uri=path_uri)
         return cleaned_data
+
 
 class TagResultView(FormView):
     template_name = '{}/tag_result.html'.format(APP_NAME)
@@ -276,16 +273,6 @@ class TagResultView(FormView):
         )
         return super().form_valid(form)
 
-    # def form_valid(self, form):
-    #     cleaned_data = form.cleaned_data
-    #     self._success_url='/'
-    #     self._success_url = '/main/config/{}'.format(self.kwargs['config_id'])
-    #     print()
-    #     print('s'*80)
-    #     print(cleaned_data)
-    #     print('s'*80)
-    #
-    #     return super().form_valid()
 
 class TagForm(forms.Form):
     def clean(self):
@@ -296,10 +283,10 @@ class TagForm(forms.Form):
         return cleaned_data
 
 
-
 class TagFileView(FormView):
     template_name = '{}/tag_file.html'.format(APP_NAME)
     form_class = TagForm
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._success_url = ''
@@ -320,11 +307,8 @@ class TagFileView(FormView):
         context['csv_file'] = path
         context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
         context['config_id'] = self.kwargs['config_id']
-        config_id =int(self.kwargs['config_id'])
+        config_id = int(self.kwargs['config_id'])
         context['params'] = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
-        print('d'*80)
-        print(context['params'])
-        print('d'*80)
         context['notes'] = Configuration.objects.get(id=config_id).notes
         return context
 
@@ -341,10 +325,8 @@ class TagFileView(FormView):
                 form.cleaned_data['path_uri']
             )
 
-        print('*'*80)
-        print(form.cleaned_data)
-        print('*'*80)
         return super().form_valid(form)
+
 
 class ParamForm(forms.Form):
     type_map = {
@@ -367,27 +349,22 @@ class ParamForm(forms.Form):
         for name, error in error_dict.items():
             self.add_error(name, error)
 
-
-
-
         clean_data['selected_file'] = self.request.POST.get('selected_file')
         clean_data['current_path'] = self.request.POST.get('current_path')
         clean_data.update(self.view.kwargs)
         return clean_data
 
+
 class ParamListView(FormView):
     template_name = '{}/parameter_list.html'.format(APP_NAME)
     form_class = ParamForm
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._success_url = ''
 
     def get_success_url(self):
         return self._success_url
-
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['request'] = self.request
 
     def get_form(self):
         form = super().get_form()
@@ -421,7 +398,7 @@ class ParamListView(FormView):
         self.populate_config()
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
-        #TODO: actually make this look for netcdf
+        # TODO: actually make this look for netcdf
         netcdf_entries = [e for e in entries if e.suffix == '.csv']
         self.populate_params(self.config)
 
@@ -461,53 +438,5 @@ class ParamListView(FormView):
     @transaction.atomic
     def form_valid(self, form):
         self.save_params_values(form)
-        print()
-        pprint(form.cleaned_data)
-
         self.tag_file_if_needed(form.cleaned_data)
         return super().form_valid(form)
-    # def save_params_values(self, cleaned_data):
-    #
-    # @transaction.atomic
-    # def form_valid(self, form):
-    #
-    #     for key, value in form.cleaned_data.items():
-    #         if 'params' in key:
-    #             param_id = int(key.replace('params', ''))
-    #             param = Parameter.objects.get(id=param_id)
-    #             param.value = value
-    #             param.save()
-    #
-    #     return super().form_valid(form)
-
-    # def render_to_response(self, context, **response_kwargs):
-    #     return super().render_to_response(context, **response_kwargs)
-
-
-class FilePickerView(TemplateView):
-    template_name = '{}/tag_file.html'.format(APP_NAME)
-
-    # # IM WORKING ON A FILE_PICKER VIEW.  IT WILL SIMPLY TAKE A PATHLIB .AS_URI()
-    # # STRING AS AN ARGUMENT AND RENDER LINKS TO OTHER PATHS
-    # # MAYBE I SHOULD PUT THE URI AS AN HTML QUERY PARAMETER
-    #
-    #
-    # # Here is some code I was playing with in ipython notebook
-    # #
-    # import pathlib
-    # import os
-    # import urllib
-    #
-    # p0 = pathlib.Path('/Users/rob/Google Drive/')
-    #
-    # file_list, path_list = [], []
-    # for f in p.iterdir():
-    #     if f.name.startswith('.'):
-    #         continue
-    #
-    #     if f.is_dir():
-    #         path_list.append(f)
-    #     else:
-    #         file_list.append(f)
-    #
-    # p0.as_uri()
