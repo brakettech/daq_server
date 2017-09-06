@@ -242,6 +242,10 @@ class ResultForm(forms.Form):
         cleaned_data = super().clean()
         cleaned_data.update(self.view.request.POST)
         cleaned_data.update(self.view.kwargs)
+        path_uri = self.view.request.GET.get('path_uri')
+        parents, path, entries = path_getter(path_uri)
+        path_uri = path.parent.as_uri()
+        cleaned_data.update(path_uri=path_uri)
         return cleaned_data
 
 class TagResultView(FormView):
@@ -263,10 +267,14 @@ class TagResultView(FormView):
         return context
 
     def get_success_url(self):
-        # return self._success_url
-        return '/main/config/{}'.format(self.kwargs['config_id'])
-        # config_id = self.kwargs['config_id']
-        # return f'/main/config/{config_id}'
+        return self._success_url
+
+    def form_valid(self, form):
+        self._success_url = '/main/config/{}?path_uri={}'.format(
+            form.cleaned_data['config_id'][0],
+            form.cleaned_data['path_uri']
+        )
+        return super().form_valid(form)
 
     # def form_valid(self, form):
     #     cleaned_data = form.cleaned_data
@@ -282,7 +290,9 @@ class TagResultView(FormView):
 class TagForm(forms.Form):
     def clean(self):
         cleaned_data = self.cleaned_data
-        cleaned_data.update(dict(self.request.POST))
+        cleaned_data.update(dict(self.view.request.POST))
+        path_uri = self.view.request.GET.get('path_uri')
+        cleaned_data.update(path_uri=path_uri)
         return cleaned_data
 
 
@@ -299,7 +309,6 @@ class TagFileView(FormView):
 
     def get_form(self):
         form = super().get_form()
-        form.request = self.request
         form.view = self
         return form
 
@@ -307,6 +316,7 @@ class TagFileView(FormView):
         context = super().get_context_data(**kwargs)
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
+
         context['csv_file'] = path
         context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
         context['config_id'] = self.kwargs['config_id']
@@ -319,12 +329,17 @@ class TagFileView(FormView):
         return context
 
     def form_valid(self, form):
+        # self._success_url = '/main/tag_file/{}/?path_uri={}'.format(
         if 'create' in form.cleaned_data:
-            self._success_url = '/main/tag_result/{}/saved'.format(
-                form.cleaned_data['config_id'][0])
+            self._success_url = '/main/tag_result/{}/saved?path_uri={}'.format(
+                form.cleaned_data['config_id'][0],
+                form.cleaned_data['path_uri']
+            )
         else:
-            self._success_url = '/main/tag_result/{}/canceled'.format(
-                form.cleaned_data['config_id'][0])
+            self._success_url = '/main/tag_result/{}/canceled?path_uri={}'.format(
+                form.cleaned_data['config_id'][0],
+                form.cleaned_data['path_uri']
+            )
 
         print('*'*80)
         print(form.cleaned_data)
