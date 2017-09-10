@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from contextlib import contextmanager
 from functools import lru_cache
 import itertools
 import os
@@ -10,6 +11,7 @@ import sys
 import numpy as np
 import pandas as pd
 from pandashells.lib.lomb_scargle_lib import lomb_scargle
+import xarray as xr
 
 
 class PrintCatcher(object):  # pragma: no cover  This is a testing utility that doesn't need to be covered
@@ -39,15 +41,7 @@ class PrintCatcher(object):  # pragma: no cover  This is a testing utility that 
             sys.stderr = sys.__stderr__
 
 
-# continuum stuff has annoying deprication warnings so blank them with stderr catcher
-with PrintCatcher('stderr'):
-    import datashader as ds
-    import holoviews as hv
-    from holoviews.operation.datashader import datashade
-    hv.extension('bokeh')
-
-
-class Pico:
+class CSV:
     def __init__(self, file_name, nrows=None, standardize=True, max_sample_freq=1e6, **channel_names):
         """
         This class provides visualization capabilities for picoscope csv files
@@ -217,7 +211,6 @@ class Pico:
         :type nrows: int
         :param df: The maxinumum number of rows to load (defaults to all)
         """
-        self.get_spectrum.cache_clear()
         df = pd.read_csv(self.file_name, skiprows=[1, 2], nrows=nrows)
         self._rename_columns(df)
         self._customize_names(df)
@@ -228,16 +221,35 @@ class Pico:
             df = self._down_sample(df, 1. / self.max_sample_freq)
         return df
 
-    @staticmethod
-    def overlay_curves(*curves):
+class Plotter:
+    def __init__(self, df):
+        # weird import location because holoviews is really heavy and I don't want it loaded unless I need it
+        # continuum stuff has annoying deprecation warnings so blank them with stderr catcher
+        with PrintCatcher('stderr'):
+            import datashader as ds
+            import holoviews as hv
+            from holoviews.operation.datashader import datashade
+            hv.extension('bokeh')
+        self.ds = ds
+        self.hv = hv
+        self.datashade = datashade
+
+
+        self.df = df
+        self.channels = [c for c in df.columns if not c == 't']
+        self.unit_map = {'t': 'seconds'}
+        self.unit_map.update({chan: 'volts' for chan in self.channels})
+
+
+    def overlay_curves(self, *curves):
         """
         A utility method for overlaying holoviews curves
 
         :type curves:  holoviews.Curve
         :param curves: *args hold curves to overlay
         """
-        disp = hv.Overlay(curves).collate()
-        hv.util.opts('RGB [width=800 height=400]', disp)
+        disp = self.hv.Overlay(curves).collate()
+        self.hv.util.opts('RGB [width=800 height=400]', disp)
         return disp
 
     def plot_time_series(self, *channels):
@@ -250,13 +262,13 @@ class Pico:
         bad_channels = set(channels) - set(self.channels)
         if bad_channels or not channels:
             raise ValueError('\n\n Must supply channel names from {}'.format(self.channels))
-        time_dim = hv.Dimension('time', label='time', unit=self.unit_map['t'])
+        time_dim = self.hv.Dimension('time', label='time', unit=self.unit_map['t'])
         colors = ['blue', 'red', 'green', 'black']
         curves = []
         for ind, channel in enumerate(channels):
-            chan_dim = hv.Dimension(channel, label=channel, unit=self.unit_map[channel])
-            curve = hv.Curve((self.df.t, self.df.loc[:, channel]), kdims=[time_dim], vdims=[chan_dim])
-            curve = datashade(curve, aggregator=ds.reductions.any(), cmap=[colors[ind]])
+            chan_dim = self.hv.Dimension(channel, label=channel, unit=self.unit_map[channel])
+            curve = self.hv.Curve((self.df.t, self.df.loc[:, channel]), kdims=[time_dim], vdims=[chan_dim])
+            curve = self.datashade(curve, aggregator=self.ds.reductions.any(), cmap=[colors[ind]])
 
             curves.append(curve)
 
@@ -286,18 +298,125 @@ class Pico:
         """
 
         df = self.get_spectrum(channel, db=db, normalized=normalized)
-        freq_dim = hv.Dimension('freq', label='freq', unit='Hz')
+        freq_dim = self.hv.Dimension('freq', label='freq', unit='Hz')
 
         if db:
             unit = 'db power'
         else:
             unit = 'power'
 
-        chan_dim = hv.Dimension(channel, label=channel, unit=unit)
-        curve = hv.Curve((df.freq, df.power), kdims=[freq_dim], vdims=[chan_dim])
-        curve = datashade(curve, aggregator=ds.reductions.any(), cmap=[color])
-        hv.util.opts('RGB [width=800 height=400]', curve)
+        chan_dim = self.hv.Dimension(channel, label=channel, unit=unit)
+        curve = self.hv.Curve((df.freq, df.power), kdims=[freq_dim], vdims=[chan_dim])
+        curve = self.datashade(curve, aggregator=self.ds.reductions.any(), cmap=[color])
+        self.hv.util.opts('RGB [width=800 height=400]', curve)
         return curve
+
+
+class NC:
+    CURRENT_VERSION = '1.0.0'
+
+    def __init__(self, bits=14, dtype=None):
+        self.version = self.CURRENT_VERSION
+        self.bits = bits
+        if dtype is None:
+            self.dtype = np.int16
+        else:
+            self.dtype = dtype
+
+        self.meta = {
+            '__version__': self.version,
+            '__dtype__': self.dtype.__name__,
+            '__bits__': self.bits,
+        }
+
+    @staticmethod
+    @contextmanager
+    def dataset(file_or_frame):
+        if isinstance(file_or_frame, str):
+            dset = xr.open_dataset(file_or_frame)
+        elif isinstance(file_or_frame, pd.DataFrame):
+            dset = xr.Dataset.from_dataframe(file_or_frame)
+        else:
+            raise ValueError('Dataset can only be created with file_name or dataframe')
+
+        yield dset
+        dset.close()
+
+    def compress_data_frame(self, df):
+        # save meta info needed to reconstitute time
+        self.meta['__delta_t__'] = delta_t = df.t.diff().median()
+        self.meta['__start_index__'] = int(np.round(df.t.iloc[0] / delta_t))
+
+        # no longer need time in the dataframe
+        df.drop('t', axis=1, inplace=True)
+
+        #  loop over all other columns saving scale values and transforming to dtype
+        for col in df.columns:
+            scale = df.loc[:, col].abs().max() / 2 ** self.bits
+            self.meta['__scale_{}__'.format(col)] = scale
+            df.loc[:, col] = (df.loc[:, col] / scale).round().astype(self.dtype)
+        return df
+
+    def csv_to_netcdf(self, csv_file_name, netcdf_file_name, **attrs):
+        # store any additional attributes in the meta dict
+        self.meta.update(**attrs)
+
+        # load a pico dataframe from the csv file
+        df = CSV(csv_file_name).df
+
+        # compress the dataframe and store meta information for reconstitution
+        df = self.compress_data_frame(df)
+
+        # create an xarray dataset from the dataframe
+        with self.dataset(df) as dset:
+            # set the meta information on the array
+            dset.attrs = self.meta
+
+            # write to netcdf
+            dset.to_netcdf(netcdf_file_name)
+
+    def load_meta(self, netcdf_file_name):
+        with self.dataset(netcdf_file_name) as dset:
+            meta = dset.attrs
+        return meta
+
+    def load(self, netcdf_file_name, channel_mappings=None):
+        if channel_mappings is None:
+            channel_mappings = {}
+
+        specified_channels = set(channel_mappings.keys())
+        allowed_channels = set('abcd')
+        bad_channels = specified_channels - allowed_channels
+        if bad_channels:
+            raise ValueError('Channel names must be taken from {}'.format(allowed_channels))
+
+        # load the data into a dataframe and extract the meta
+        with self.dataset(netcdf_file_name) as dset:
+            self.meta = dset.attrs
+            df = dset.to_dataframe()
+
+        # extract the scale mapping for all columns
+        rex_scale = re.compile(r'__scale_([a-z])__')
+        scales = {}
+        for key, val in self.meta.items():
+            m = rex_scale.match(key)
+            if m:
+                col = m.group(1)
+                scales[col] = val
+
+        # reconstitute time
+        df.insert(0, 't', range(len(df)))
+        df.loc[:, 't'] = (self.meta['__start_index__'] + df.t) * self.meta['__delta_t__']
+
+        # scale columns
+        for col, scale in scales.items():
+            df.loc[:, col] = scale * df.loc[:, col]
+
+        # rename channels
+        df.rename(columns=channel_mappings, inplace=True)
+
+        # return the dataframe
+        return df
 
 
 #####################################################################################################################
