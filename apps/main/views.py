@@ -1,5 +1,6 @@
 import os
 import pathlib
+from pprint import pprint
 
 from django import forms
 from django.db import transaction
@@ -10,7 +11,7 @@ from django.utils.text import slugify
 
 from apps.main.models import Experiment, Configuration
 from apps.main.models import Parameter
-
+from pico import Data
 
 APP_NAME = 'main'
 DEFAULT_PATH = '/daqroot'
@@ -319,13 +320,28 @@ class TagFileView(FormView):
                 form.cleaned_data['config_id'][0],
                 form.cleaned_data['path_uri']
             )
+            self.tag_file(form)
         else:
             self._success_url = '/main/tag_result/{}/canceled?path_uri={}'.format(
                 form.cleaned_data['config_id'][0],
                 form.cleaned_data['path_uri']
             )
-
         return super().form_valid(form)
+
+    def tag_file(self, form):
+        config = Configuration.objects.get(id=int(form.cleaned_data['config_id'][0]))
+        params = Parameter.objects.filter(configuration=config).as_dict()
+        path_uri = form.cleaned_data['path_uri']
+        parents, csv_file, entries = path_getter(path_uri)
+        params.update(notes=config.notes)
+
+        nc_file = pathlib.Path(csv_file.parent.joinpath(csv_file.stem + '.nc').as_posix())
+        data = Data()
+        data.csv_to_netcdf(csv_file.as_posix(), nc_file.as_posix(), **params)
+
+
+        print()
+        print(f'params {params}')
 
 
 class ParamForm(forms.Form):
@@ -398,8 +414,7 @@ class ParamListView(FormView):
         self.populate_config()
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
-        # TODO: actually make this look for netcdf
-        netcdf_entries = [e for e in entries if e.suffix == '.csv']
+        netcdf_entries = [e for e in entries if e.suffix == '.nc']
         self.populate_params(self.config)
 
         context = super().get_context_data(**kwargs)
@@ -415,6 +430,11 @@ class ParamListView(FormView):
     def save_params_values(self, form):
         self.populate_config()
         self.populate_params(self.config)
+
+        # save notes
+        self.config.notes = form.cleaned_data['notes']
+        self.config.save()
+
         param_names = {p.name for p in self.params}
         # loop over all cleaned data items
         for key, value in form.cleaned_data.items():
@@ -434,6 +454,7 @@ class ParamListView(FormView):
                 cleaned_data['config_id'],
                 path.as_uri(),
             )
+
 
     @transaction.atomic
     def form_valid(self, form):

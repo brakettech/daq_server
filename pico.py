@@ -3,14 +3,12 @@
 from contextlib import contextmanager
 from functools import lru_cache
 import itertools
-import os
 import re
 import sys
-
+import pathlib
 
 import numpy as np
 import pandas as pd
-from pandashells.lib.lomb_scargle_lib import lomb_scargle
 import xarray as xr
 
 
@@ -73,6 +71,7 @@ class CSV:
             raise ValueError('\n\nCan only supply names for channels labeled "a", "b", "c", or "d"')
         self._conversions = {
             'ms': (.001, 's'),
+            'mV': (.001, 'v'),
         }
 
         self.max_sample_freq = max_sample_freq
@@ -222,7 +221,8 @@ class CSV:
         return df
 
 class Plotter:
-    def __init__(self, df):
+    def __init__(self, frame_or_file):
+        self.df = self.load(frame_or_file)
         # weird import location because holoviews is really heavy and I don't want it loaded unless I need it
         # continuum stuff has annoying deprecation warnings so blank them with stderr catcher
         with PrintCatcher('stderr'):
@@ -230,16 +230,35 @@ class Plotter:
             import holoviews as hv
             from holoviews.operation.datashader import datashade
             hv.extension('bokeh')
+            from pandashells.lib.lomb_scargle_lib import lomb_scargle
         self.ds = ds
         self.hv = hv
         self.datashade = datashade
+        self.lomb_scargle = lomb_scargle
 
-
-        self.df = df
-        self.channels = [c for c in df.columns if not c == 't']
+        self.channels = [c for c in self.df.columns if not c == 't']
         self.unit_map = {'t': 'seconds'}
         self.unit_map.update({chan: 'volts' for chan in self.channels})
 
+    def load(self, frame_or_file):
+        if isinstance(frame_or_file, pd.DataFrame):
+            df = frame_or_file
+
+        elif isinstance(frame_or_file, str):
+            file = pathlib.Path(frame_or_file)
+            if not file.is_file():
+                raise ValueError('File {} does not exist'.format(file.as_posix()))
+
+            if file.suffix == '.csv':
+                df = CSV(frame_or_file).df
+            elif file.suffix == '.nc':
+                df = Data().load(frame_or_file)
+            else:
+                raise ValueError('File type {} not recognized'.format(file.suffix))
+        else:
+            raise ValueError('frame_or_file must be either a string or a dataframe')
+
+        return df
 
     def overlay_curves(self, *curves):
         """
@@ -276,7 +295,7 @@ class Plotter:
 
     @lru_cache()
     def get_spectrum(self, channel, db=True, normalized=False):
-        df = lomb_scargle(self.df, 't', channel, freq_order=True)
+        df = self.lomb_scargle(self.df, 't', channel, freq_order=True)
         if normalized:
             df.loc[:, 'power'] = df.power / df.power.sum()
         if db:
@@ -312,7 +331,7 @@ class Plotter:
         return curve
 
 
-class NC:
+class Data:
     CURRENT_VERSION = '1.0.0'
 
     def __init__(self, bits=14, dtype=None):
@@ -414,44 +433,4 @@ class NC:
 
         # rename channels
         df.rename(columns=channel_mappings, inplace=True)
-
-        # return the dataframe
-        return df
-
-
-#####################################################################################################################
-# Some day I want to get this working from the command line, but today is not that day
-#####################################################################################################################
-# def ensure_file_exists(file_name):
-#     """
-#     Raises a nice error message if filename does not exist
-#     """
-#     if not os.path.isfile(file_name):
-#         msg = "\n\nThe file: '{}' does not exist\n\n".format(file_name)
-#         sys.stderr.write(msg)
-#         sys.exit(1)
-# @click.command()
-# @click.argument('channels', nargs=-1)
-# @click.option('-f', '--file_name', default=None, type=str, help='A pico-generated csv file')
-# @click.option('-s', '--spectrum', is_flag=True, help='Plot the spectrum instead of the time series')
-# @click.option('-n', '--nrows', default=None, type=int, help='Limit number of rows to this number')
-# @click.option('-m', '--max_freq', default=1e6, type=float, help='Average down to this max sample frequency')
-# def main(file_name, spectrum, nrows, max_freq, channels):
-#     if file_name is None or not channels:
-#         sys.stderr.write('\n{} --help\n\n'.format(__file__))
-#         return
-#
-#     ensure_file_exists(file_name)
-#
-#     p = Pico(file_name, nrows=nrows, max_sample_freq=max_freq)
-#     layout = p.plot_time_series(*channels)
-#
-#     renderer = hv.renderer('bokeh')
-#     renderer = renderer.instance(mode='server')
-#
-#     renderer.server_doc(layout)
-#
-#
-#
-# if __name__ == '__main__':
-#     main()
+        self.df = df

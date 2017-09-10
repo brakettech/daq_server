@@ -61,6 +61,14 @@ class Configuration(models.Model):
         return self.name
 
 
+class ParameterQueryset(models.QuerySet):
+    def as_dict(self):
+        return {m.name: m.value for m in self}
+
+class ParameterManager(models.Manager):
+    def get_queryset(self):
+        return ParameterQueryset(self.model)
+
 class Parameter(models.Model):
     configuration = models.ForeignKey('main.Configuration')
     name = models.CharField(max_length=CHAR_LENGTH)
@@ -79,6 +87,8 @@ class Parameter(models.Model):
 
     def __str__(self):
         return self.name
+
+    objects = ParameterManager()
 
 
 

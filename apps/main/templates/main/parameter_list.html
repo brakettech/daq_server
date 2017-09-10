@@ -44,7 +44,7 @@
       <input type="hidden" name="current_path" value="{{ current_path.as_posix }}"/>
 
         <div class="pill_container" style="max-width: 400px; margin-bottom: 10px; max-height: 100px; overflow-y: scroll;">
-          <div class="pill"> <a href="/main/config/{{ config.id }}">Home</a> </div>
+          <div class="pill"> <a href="/main/config/{{ config.id }}">daqroot</a> </div>
           {% for parent in parents %}
             <div class="pill">
               <a href="/main/config/{{ config.id }}?path_uri={{ parent.as_uri }}">{{ parent.name }}</a>
