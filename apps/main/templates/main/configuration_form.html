@@ -1,15 +1,15 @@
 {%  extends "main_base.html" %}
+{% block nav %}
+  <h2 style="text-align: center">Create New Configuration</h2>
+{% endblock %}
 
 {% block content %}
-  <div style="flex-grow: 1"></div>
   <div class="panel" style="flex-grow: 15">
     <div class="card">
-      <h2 style="text-align: center">Create New Configuration</h2>
       <form action="/main/new_config/{{ experiment_id }}" method="post">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Create</button>
       </form>
     </div>
   </div>
-  <div style="flex-grow: 1"></div>
 {% endblock %}
