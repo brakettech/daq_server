@@ -1,3 +1,4 @@
+# Run this to create: conda env create --force -f environment.yml
 name: daq
 dependencies:
     - bokeh=0.12.4=py36_0
