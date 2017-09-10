@@ -397,6 +397,7 @@ class Data:
     def load_meta(self, netcdf_file_name):
         with self.dataset(netcdf_file_name) as dset:
             meta = dset.attrs
+        self.meta = meta
         return meta
 
     def load(self, netcdf_file_name, channel_mappings=None):

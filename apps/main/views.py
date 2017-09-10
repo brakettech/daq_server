@@ -1,11 +1,12 @@
 import os
 import pathlib
 from pprint import pprint
+import re
 
 from django import forms
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.views.generic import FormView, DeleteView, CreateView, UpdateView
+from django.views.generic import FormView, DeleteView, CreateView, UpdateView, TemplateView
 from django.views.generic import ListView
 from django.utils.text import slugify
 
@@ -53,6 +54,29 @@ class NewExperimentForm(forms.ModelForm):
         model = Experiment
         fields = ['name']
 
+
+class NCView(TemplateView):
+    template_name = '{}/netcdf.html'.format(APP_NAME)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        path_uri = self.request.GET.get('path_uri')
+
+        parents, path, entries = path_getter(path_uri)
+
+        data = Data()
+        data.load_meta(path.as_posix())
+
+        rex_private = re.compile(r'__\S+__')
+        params = {}
+        for key, val in data.meta.items():
+            if not rex_private.match(key) and not key == 'notes':
+                params[key] = val
+
+        context['file'] = path.as_posix()
+        context['params'] = params
+        context['notes'] = data.meta.get('notes', '')
+        return context
 
 class NewConfigView(CreateView):
     model = Configuration
@@ -269,7 +293,7 @@ class TagResultView(FormView):
 
     def form_valid(self, form):
         self._success_url = '/main/config/{}?path_uri={}'.format(
-            form.cleaned_data['config_id'][0],
+            form.cleaned_data['config_id'],
             form.cleaned_data['path_uri']
         )
         return super().form_valid(form)
@@ -338,11 +362,6 @@ class TagFileView(FormView):
         nc_file = pathlib.Path(csv_file.parent.joinpath(csv_file.stem + '.nc').as_posix())
         data = Data()
         data.csv_to_netcdf(csv_file.as_posix(), nc_file.as_posix(), **params)
-
-
-        print()
-        print(f'params {params}')
-
 
 class ParamForm(forms.Form):
     type_map = {

@@ -12,13 +12,13 @@ from apps.main.views import (
     ParamListView,
     TagFileView,
     NewConfigView,
-    NewParamView, ChangeParamView, DeleteParamView, TagResultView)
+    NewParamView, ChangeParamView, DeleteParamView, TagResultView, NCView)
 from apps.main import views
 
 
 urlpatterns = [
     url(r'^experiment/?$', ExperimentListView.as_view(), name='experiments'),
-    url(r'^experiment/(?P<experiment_id>\d+)/?$', ConfigListView.as_view(), name='experiment'),
+    url(r'^experiment/(?P<experiment_id>\d+)/?$', ConfigListView.as_view()),
     url(r'^new_experiment/?$', NewExperimentView.as_view()),
     url(r'^delete_experiment/(?P<pk>\d+)/?$', DeleteExperimentView.as_view()),
 
@@ -33,6 +33,9 @@ urlpatterns = [
     url(r'^change_param/params(?P<param_id>\d+)/?$', ChangeParamView.as_view()),
     url(r'^delete_param/(?P<param_id>\d+)/?$', DeleteParamView.as_view()),
     url(r'^delete_config/(?P<pk>\d+)/?$', DeleteConfigView.as_view()),
+
+    url(r'^netcdf/?$', NCView.as_view()),
+
     # url(r'^file_picker$', FilePickerView.as_view()),
     # url(r'^experiment/(?P<experiment_id>\d+)/(?P<configuration_id>\d+)/?$', ExperimentView.as_view()),
     # url(r'parameters/(?P<configuration_id>\d+)*$', views.ParamList.as_view()),

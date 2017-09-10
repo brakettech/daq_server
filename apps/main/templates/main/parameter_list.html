@@ -74,7 +74,7 @@
         <span style="text-align: center">Tagged Files</span>
         <div style="display: flex; flex-direction: column; flex-grow: 1; flex-basis: 1px; overflow-y: scroll">
           {% for file in netcdf_files %}
-            <div><a class="highlightable" href="">{{ file.name }}</a> </div>
+            <div><a class="highlightable" href="/main/netcdf/?path_uri={{ file.as_uri }}">{{ file.name }}</a> </div>
           {% endfor %}
         </div>
       </div>
