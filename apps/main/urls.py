@@ -18,7 +18,7 @@ from apps.main import views
 
 urlpatterns = [
     url(r'^experiment/?$', ExperimentListView.as_view(), name='experiments'),
-    url(r'^experiment/(?P<experiment_id>\d+)/?$', ConfigListView.as_view()),
+    url(r'^experiment/(?P<experiment_id>\d+)/?$', ConfigListView.as_view(), name='experiment'),
     url(r'^new_experiment/?$', NewExperimentView.as_view()),
     url(r'^delete_experiment/(?P<pk>\d+)/?$', DeleteExperimentView.as_view()),
 
