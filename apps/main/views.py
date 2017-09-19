@@ -329,12 +329,15 @@ class TagFileView(FormView):
         path_uri = self.request.GET.get('path_uri')
         parents, path, entries = path_getter(path_uri)
 
+        netcdf_file = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
+
         context['csv_file'] = path
-        context['netcdf_file'] = path.parent.joinpath(path.name.replace(path.suffix, '.nc'))
+        context['netcdf_file'] = netcdf_file
         context['config_id'] = self.kwargs['config_id']
         config_id = int(self.kwargs['config_id'])
         context['params'] = Parameter.objects.filter(configuration_id=config_id).order_by(Lower('name'))
         context['notes'] = Configuration.objects.get(id=config_id).notes
+        context['will_overwrite'] = netcdf_file.is_file()
         return context
 
     def form_valid(self, form):

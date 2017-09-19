@@ -26,6 +26,11 @@
           <input type="hidden" name="config_id" value="{{ config_id }}"/>
           <button type="submit" style="width: 100px; height: 40px; margin: 5px;" name="create">Create NetCDF</button>
           <button type="submit" style="width: 50px; height: 40px; margin: 5px;" name="cancel">Cancel</button>
+          {% if will_overwrite %}
+            <div style="font-size: 1.5em; font-weight: bold; text-align: center; flex-grow: 1">
+              <span style="color: red;">WARNING: </span>Existing file {{ netcdf_file.name }} will be overwritten
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
