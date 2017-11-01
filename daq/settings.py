@@ -24,7 +24,12 @@ SECRET_KEY = 'dtkt5-b_s&7&@ohlhs0rfgwf(rq&=eu%-lx5x1fzlaou@gke_x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'braket.ngrok.io.ngrok.io',
+    'braket.ngrok.io'
+]
 
 
 # Application definition
